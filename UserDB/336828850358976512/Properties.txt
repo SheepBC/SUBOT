@@ -1,0 +1,6 @@
+#UserDB/336828850358976512/Properties.txt
+#Thu Dec 29 17:47:20 KST 2022
+Money=100000
+Debt=0
+Tax=0
+Exp=4328

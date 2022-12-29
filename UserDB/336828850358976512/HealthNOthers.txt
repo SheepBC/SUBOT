@@ -1,0 +1,12 @@
+#UserDB/336828850358976512/HealthNOthers.txt
+#Thu Dec 29 17:57:08 KST 2022
+School=null
+Dead_Num=0
+Health=2038
+Check_NUm=0
+isHealth=false
+isStopHealth=false
+Failure_NUm=0
+SleepTime=65340/6048000
+Tired=29
+Name=양불리

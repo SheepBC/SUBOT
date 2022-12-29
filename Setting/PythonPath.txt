@@ -1,0 +1,3 @@
+#Setting/PythonPath.txt
+#Sat Jun 11 16:19:26 KST 2022
+Number=Number.py

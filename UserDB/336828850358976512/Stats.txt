@@ -1,0 +1,6 @@
+#UserDB/336828850358976512/Stats.txt
+#Mon Sep 12 14:52:53 KST 2022
+Stealing=0
+Luck=0
+Defense=0
+Resilience=0
