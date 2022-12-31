@@ -185,6 +185,18 @@ public class MessageReceived implements Runnable {
         if(CommandCheck("내주식")){
             stock_user.user();
         }
+        if(CommandCheck("매수")){
+            stock_user.Stock_Buy();
+        }
+        if(CommandCheck("풀매수")){
+            stock_user.Stock_Buy_All();
+        }
+        if(CommandCheck("매도")){
+            stock_user.Stock_Sell();
+        }
+        if(CommandCheck("풀매도")){
+            stock_user.Stock_Sell_All();
+        }
     }
 
     void Test(){

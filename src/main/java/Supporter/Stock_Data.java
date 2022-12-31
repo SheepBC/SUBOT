@@ -123,8 +123,8 @@ public class Stock_Data {
     }
 
     public void addWeek_Selling_Price(BigInteger bi){
-        BigInteger sp = getSelling_Num().add(bi);
-        setSelling_Num(sp);
+        BigInteger sp = getWeek_Selling_Num().add(bi);
+        setWeek_Selling_Num(sp);
     }
 
     public String getUpdate_Type(){
@@ -173,6 +173,9 @@ public class Stock_Data {
         int aP = (int) SaveNLoad.getRandom("Stock/Common_Update.txt");
         if((int) (Math.random()*2.5) == 0) aP *= -1;
         addPrice(new BigInteger(String.valueOf(aP)));
+        if(getPrice().max(BigInteger.ZERO).equals(BigInteger.ZERO)){
+            setPrice(new BigInteger("1000"));
+        }
     }
 
     private void update_Price_P() {
@@ -237,6 +240,9 @@ public class Stock_Data {
         return SaveNLoad.loadP(inform,Color);
     }
 
+    public double getLeftNum(){
+        return getALl_Num().subtract(getSelling_Num()).doubleValue();
+    }
 
 
 }

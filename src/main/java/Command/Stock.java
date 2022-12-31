@@ -58,8 +58,8 @@ public class Stock {
         BigDecimal now = new BigDecimal(stock_data.getPrice()).multiply(new BigDecimal("100"));
         BigDecimal last = new BigDecimal(stock_data.getLast_Price());
         BigDecimal up_P = now.divide(last,2, RoundingMode.HALF_EVEN).subtract(new BigDecimal("100"));
-
-        p += Support.unit(stock_data.getPrice())+"("+up_P+"%)";
+        String add = up_P.min(BigDecimal.ZERO).equals(BigDecimal.ZERO) ? "+":"";
+        p += Support.unit(stock_data.getPrice())+"("+add+up_P+"%)";
         return p;
     }
 

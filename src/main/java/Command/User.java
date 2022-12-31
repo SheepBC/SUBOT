@@ -364,7 +364,7 @@ public class User {
 
             EmbedBuilder embed = new EmbedBuilder();
 
-            String title = arg[1];
+            String title = arg[1] == null ? "":arg[1];
             embed.setTitle(title);
             embed.setColor(Support.getRandomColor());
             int i = 1;

@@ -632,8 +632,9 @@ public class UserDB {
     }
 
     private String[] getStock(String id){
+         String inform = SaveNLoad.loadP(Stock,id);
+        if(inform == null) SaveNLoad.addP(Stock,id,"0.0/0");
          String[] list = SaveNLoad.loadP(Stock,id).split("/");
-         if(list.length == 0) setStock(id,0,BigInteger.ZERO);
          return SaveNLoad.loadP(Stock,id).split("/");
     }
 
