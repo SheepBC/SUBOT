@@ -15,6 +15,10 @@ public class Chart {
         makeDir(path);
     }
 
+    public String getPath() {
+        return path;
+    }
+
     public ArrayList<String> getDay_Time_List(int year, int month, int date){
         String path = this.path+"/"+year+"/"+month+"/"+date+".log";
         File file = new File(path);
@@ -47,7 +51,9 @@ public class Chart {
     public void add(String num){
         LocalDate localDate = LocalDate.now();
         LocalTime localTime = LocalTime.now();
-        String Dir_Path = localDate.getYear()+"/"+localDate.getMonthValue();
+        String month = String.valueOf(localDate.getMonthValue());
+        month =month.length() == 1 ? "0"+month:month;
+        String Dir_Path = localDate.getYear()+"/"+month;
 
         makeDir(Dir_Path);
         String day = String.valueOf(localDate.getDayOfMonth());
@@ -165,7 +171,6 @@ public class Chart {
                 String time = year+m+d.replace(".log","");
                 int time_num = Integer.parseInt(time);
                 if(st <= time_num && time_num <= et){
-
                     File day = new File(path+"/"+year+"/"+m+"/"+d);
                     try {
                         BufferedReader br = new BufferedReader(new FileReader(day));

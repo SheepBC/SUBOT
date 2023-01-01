@@ -368,6 +368,15 @@ public class Support {
         return Double.parseDouble(ns);
     }
 
+    public static boolean isBigI(String price){
+        try {
+            BigInteger bigInteger = new BigInteger(price);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
 
 
 

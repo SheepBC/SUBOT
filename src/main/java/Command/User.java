@@ -1,6 +1,9 @@
 package Command;
 
+import Chart.Chart;
+import Chart.Chart_Data;
 import Main.SelectButton;
+import SugoData.SugoData;
 import Supporter.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -12,10 +15,14 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 
 import java.awt.*;
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
+
+import static Chart.Make_Chart.makeLine_Chart;
 
 public class User {
 
@@ -250,11 +257,11 @@ public class User {
                     .addOption("건강", "간강")
                     .addOption("경험치", "경험치")
                     .addOption("빚", "빚")
-                    .addOption("스탯", "스탯")
+                    //.addOption("스탯", "스탯")
                     .addOption("미납세", "미납세")
                     .addOption("죽거나 파산힌 횟수", "죽거나파산한횟수");
 
-            channel.sendMessage("**숩순위 [돈/자산(재산)/건강/경험치/빚/스탯/미납세/죽거나파산한횟수]**").setActionRow(menu.build()).queue();
+            channel.sendMessage("**숩순위 [돈/자산(재산)/건강/경험치/빚/미납세/죽거나파산한횟수]**").setActionRow(menu.build()).queue();
             return;
         }
 
@@ -275,7 +282,6 @@ public class User {
                 break;
             case "재산":
             case "자산":
-            case "스탯":
             case "죽거나파산한횟수":
                 isOne = false;
                 break;
@@ -308,7 +314,7 @@ public class User {
             int i = 1;
             for (Rank rank : list) {
                 UserDB userDB = new UserDB(rank.getname());
-                embed.addField(i + "위", userDB.getName() + ": " + Support.unit(rank.getNumber()), true);
+                embed.addField(i + "위 "+userDB.getName() ,Support.unit(rank.getNumber()), true);
                 i++;
                 if (i > 5) {
                     Button button = Button.primary("UserRank" + s, "전체순위보기");
@@ -370,7 +376,7 @@ public class User {
             int i = 1;
             for (Rank rank : list) {
                 UserDB userDB = new UserDB(rank.getname());
-                embed.addField(i + "위", userDB.getName() + ": " + Support.unit(rank.getNumber()), true);
+                embed.addField(i + "위 "+userDB.getName(), Support.unit(rank.getNumber()), true);
                 i++;
                 if (i > 5) {
                     Button button = Button.primary("UserRank" + s, "전체순위보기");
@@ -472,7 +478,7 @@ public class User {
             int i = 1;
             for(Rank rank:list){
                 UserDB userDB = new UserDB(rank.getname());
-                embed.addField(i+"위",userDB.getName()+": "+Support.unit(rank.getNumber()),true);
+                embed.addField(i+"위 "+userDB.getName(),Support.unit(rank.getNumber()),true);
                 i++;
             }
             event.replyEmbeds(embed.build()).setEphemeral(true).queue();
@@ -555,6 +561,160 @@ public class User {
 
         return RankList;
     }
+
+    public void send(){
+        String command = "숩송금 [받는사람] [금액]";
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        if(arg.length < 3){
+            channel.sendMessage(command).queue();
+            return;
+        }
+
+        String sentId = arg[1].replace("<@","").replace(">","");
+        String price = arg[2];
+        UserDB userDB = new UserDB(user);
+        UserDB sent = new UserDB(sentId);
+
+        if(!UserDB.isUser(sentId)){
+            channel.sendMessage("받는 사람이 회원가입되어있지 않습니다.").queue();
+            return;
+        }
+        if(!Support.isBigI(price)){
+            channel.sendMessage(command).queue();
+            return;
+        }
+
+        BigInteger sent_price = new BigInteger(price);
+        if(sent_price.min(userDB.getMoney()).equals(userDB.getMoney())){
+            channel.sendMessage("돈이 부족합니다.").queue();
+            return;
+        }
+        if(sent_price.min(BigInteger.ZERO).equals(sent_price)){
+            channel.sendMessage("어디서 돈을 훔쳐갈라고!!").queue();
+            return;
+        }
+        userDB = new UserDB(user);
+        userDB.addMoney(sent_price.multiply(new BigInteger("-1")));
+        userDB = new UserDB(sentId);
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("송금");
+        embed.setColor(Support.getRandomColor());
+        embed.addField("받는 사람",sent.getName(),true);
+
+        if(user.isBot()){
+            sent = new UserDB(sentId);
+            sent.addMoney(sent_price.divide(BigInteger.TWO));
+            SugoData.addMoney(sent_price.divide(BigInteger.TWO));
+            embed.addField("금액",Support.unit(sent_price.divide(BigInteger.TWO)),true);
+        }
+        else {
+            sent = new UserDB(sentId);
+            sent.addMoney(sent_price);
+            embed.addField("금액",Support.unit(sent_price),true);
+        }
+        channel.sendMessage(arg[1]).queue();
+        channel.sendMessageEmbeds(embed.build()).queue();
+
+    }
+
+    public void chart(){
+        String command = "숩유저그래프 (건강/자산) (오늘/일주일/한달/일년/전체)";
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        String days = "전체";
+        String[] day_list = {"일주일","한달","일년","전체","오늘"};
+        String type = "자산";
+        String[] type_list = {"건강","자산"};
+        if(arg.length == 2){
+            if(List.of(day_list).contains(arg[1])) days = arg[1];
+            else if(List.of(type_list).contains(arg[1])) type = arg[1];
+            else {
+                channel.sendMessage(command).queue();
+                return;
+            }
+        }else if(arg.length >= 3){
+            if(List.of(type_list).contains(arg[1])) type = arg[1];
+            else {
+                channel.sendMessage(command).queue();
+                return;
+            }
+            if(List.of(day_list).contains(arg[2])) days = arg[2];
+            else {
+                channel.sendMessage(command).queue();
+                return;
+            }
+        }
+
+        String path = makeChart(days,type);
+        File file = new File(path);
+        channel.sendFile(file).queue();
+    }
+
+    public String makeChart(String days,String type){
+
+        String type_E = "";
+        switch (type){
+            case "건강":
+                type_E = "Chart_H";
+                break;
+            case "자산":
+                type_E = "Chart_P";
+                break;
+        }
+
+        long plus = 0;
+        if(days.equalsIgnoreCase("일주일")){
+            plus = -7;
+        }
+        if(days.equalsIgnoreCase("한달")){
+            plus = -30;
+        }
+        if(days.equalsIgnoreCase("일년")){
+            plus = -365;
+        }
+        if(days.equalsIgnoreCase("전체")){
+            plus = -12000;
+        }
+
+        ArrayList<String> check_times = new  ArrayList<>();
+
+        String now = LocalDate.now().toString().replace("-","/");
+        String old = LocalDate.now().plusDays(plus).toString().replace("-","/");
+        String id = user.getId();
+        String colors = "122:122:12";
+        String start_time  = LocalDate.now().plusDays(plus).toString();
+
+        Chart chart = new Chart("UserDB/"+userid+"/Charts/"+type_E);
+        ArrayList<Chart_Data> cds = chart.getChart_Data_list(old,now);
+        check_times.add(cds.get(0).time.substring(0,10).replace("/","-"));
+        String path = "UserDB/"+userid+"/Charts/Images/"+id.replace("/","-")+"_"+days+".png";
+
+        String[] ctList = check_times.toArray(new String[0]);
+        Arrays.sort(ctList);
+        String check_time = ctList[0];
+
+        if(checkStartTime(start_time,check_time)){
+            start_time = check_time;
+        }
+
+        makeLine_Chart(path,id.replace("/","-")+"("+start_time+"~"+LocalDate.now()+")/Day/Berry",id,colors, cds);
+        return path;
+    }
+
+    static private boolean checkStartTime(String startTime,String checkTime){
+        if(checkTime.equalsIgnoreCase(""))return false;
+        long s = Long.parseLong(startTime.replace("-",""));
+        long c = Long.parseLong(checkTime.replace("-",""));
+        if(s < c) return true;
+        return false;
+    }
+
+
 
 
 }

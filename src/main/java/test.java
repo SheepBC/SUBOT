@@ -1,9 +1,11 @@
 import Chart.Chart;
 import Chart.Chart_Data;
 import Chart.Make_Chart;
+import SugoData.SugoData;
 import Supporter.SaveNLoad;
 import Supporter.Stock_Data;
 import Supporter.Support;
+import Supporter.UserDB;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -18,11 +20,13 @@ import java.util.Locale;
 public class test {
 
     public static void main(String[] args) {
-        String s1 = "2022/12/03";
-        String s2 = "2019/12/31";
+        Chart chart = new Chart("UserDB/353350451607109633/Charts/Chart_P");
+        ArrayList<Chart_Data> list = chart.getChart_Data_list("2022/12/23","2023/12/31");
+        System.out.println(chart.getPath());
+        for(Chart_Data cd :list){
+            System.out.println(cd.time+" "+cd.value);
+        }
 
-        String[] list = {s1, s2};
-        Arrays.sort(list);
-        System.out.println(list[0]);
+        Make_Chart.makeLine_Chart("1.png","t/t/t","D","122:122:1", list);
     }
 }

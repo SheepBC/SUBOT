@@ -29,7 +29,6 @@ public class Stock_Menu {
     }
 
     static public void chart(String id, String day,SelectMenuInteraction event){
-        System.out.println(id+" "+day);
         String path = Stock.make_Chart(day,id);
         File file = new File(path);
         event.getChannel().sendFile(file).queue();

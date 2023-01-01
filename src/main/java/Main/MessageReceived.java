@@ -33,7 +33,7 @@ public class MessageReceived implements Runnable {
         User();
         User_Health();
         Stock();
-        Enhance();
+        //Enhance();
 
         Test();
 
@@ -147,6 +147,12 @@ public class MessageReceived implements Runnable {
         }
         if(CommandCheck("유저정보")){
             user.otherUser_inform(event.getJDA());
+        }
+        if(CommandCheck("송금")){
+            user.send();
+        }
+        if(CommandCheck("유저그래프")){
+            user.chart();
         }
     }
 

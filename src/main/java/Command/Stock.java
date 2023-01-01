@@ -69,9 +69,7 @@ public class Stock {
 
         ArrayList<String> days = new ArrayList<>();
         days.add("오늘");days.add("일주일");days.add("한달");days.add("일년");
-        List<String> stocks = Stock_Data.list();
 
-        System.out.println(arg.length);
         if(arg.length == 1){
             SelectMenu.Builder menu = SelectMenu.create("Stock_Chart");
             for (String id:Stock_Data.list()){
@@ -138,7 +136,7 @@ public class Stock {
                 }
 
                 idss = idss.substring(0,idss.length()-1);
-                String path = idss.replace("/","-")+"_"+start_time+"_"+list[1].replace("/","-")+".png";
+                String path = "charts/"+idss.replace("/","-")+"_"+start_time+"_"+list[1].replace("/","-")+".png";
 
                 String[] ctList = check_times.toArray(new String[0]);
 
@@ -200,7 +198,7 @@ public class Stock {
             check_times.add(cds.get(0).time.substring(0,10).replace("/","-"));
         }
         idss = idss.substring(0,idss.length()-1);
-        String path = idss.replace("/","-")+"_"+days+".png";
+        String path = "charts/"+idss.replace("/","-")+"_"+days+".png";
 
         String[] ctList = check_times.toArray(new String[0]);
 
@@ -272,7 +270,7 @@ public class Stock {
                     }
                 }
             }
-        },second,second);
+        },min,min);
 
     }
 

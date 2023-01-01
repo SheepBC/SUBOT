@@ -78,6 +78,7 @@ public class UserDB {
     }
     public UserDB(String uid){
         userid = uid;
+        name = "미정";
         path =Path.UserDBPath+ "/"+userid;
         HNO = path+"/HealthNOthers.txt";
         Property = path+"/Properties.txt";
@@ -662,7 +663,6 @@ public class UserDB {
         }
 
         Timer timer = new Timer();
-        System.out.println(date);
 
         timer.schedule(new TimerTask() {
             @Override

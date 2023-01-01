@@ -1,8 +1,13 @@
 package SugoData;
 
 import Supporter.SaveNLoad;
+import Supporter.Support;
+import Supporter.UserDB;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+
 public class SugoData {
 
     public static String DataPath = "Sub/Data.txt";
@@ -62,5 +67,17 @@ public class SugoData {
         SaveNLoad.addP(DataPath,tax,String.valueOf(f));
     }
 
+    public static BigInteger getSP(){
+        ArrayList<BigDecimal> list = new ArrayList<>();
+        for(String id: UserDB.getUserList()){
+            UserDB userDB = new UserDB(id);
+            BigDecimal p =new BigDecimal(userDB.getAll_Property());
+            UserDB userDB1 = new UserDB(id);
+            String n = userDB1.getName();
+            list.add(p);
+        }
+        BigDecimal am = Support.getAM_Num(list.toArray(new BigDecimal[0]));
+        return am.toBigInteger().divide(new BigInteger("2598810490"));
+    }
 
 }

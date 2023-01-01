@@ -75,6 +75,7 @@ public class Ready implements Runnable{
     }
 
     public void BackUp(){
+        System.out.println("백업시스템 작동시작");
         Timer timer = new Timer();
         Date date = new Date();
         date.setHours(1);
