@@ -1,0 +1,10 @@
+#Userdb/702726710881419366.txt
+#Sun Dec 25 11:49:27 KST 2022
+prd=62.0
+money=443425.0
+heb=f
+name=4680
+slat=0.0
+health=158624.0
+slt=0.0
+exp=48753.0

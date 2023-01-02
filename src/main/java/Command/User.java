@@ -105,7 +105,6 @@ public class User {
                         +(userDB.isHealth() ? "\n회복중":"")
                         +(userDB.isSleeping() ? sleep:"")
                 ,false);
-
         embed.addField("**스탯**",
                 /*
                 "도둑질: "+userDB.getStealing()+"강"

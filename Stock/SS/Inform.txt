@@ -1,17 +1,17 @@
 #Stock/SS/Inform.txt
-#Thu Dec 29 17:57:35 KST 2022
+#Mon Jan 02 21:23:34 KST 2023
 Week_Selling_Num=0
 seed=39314
 color=122\:1\:122
 Start_Num=10000
-last_Money=962465263
-Now_All_Money=273881676000
+last_Money=1047
+Now_All_Money=323100
 Time=0/1
 Selling_Num=0
 update_Type=P
 Now_Num=300
 Start_All_Money=10000000000
-x=18834.0
-name=테스트
-Id=Ts
+x=24168.0
+name=테스트s
+Id=ss
 smooth=123

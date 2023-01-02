@@ -154,6 +154,10 @@ public class MessageReceived implements Runnable {
         if(CommandCheck("유저그래프")){
             user.chart();
         }
+        Work work = new Work(event,args);
+        if(CommandCheck("광질")){
+            work.mining();
+        }
     }
 
     void User_Health(){

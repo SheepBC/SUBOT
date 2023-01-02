@@ -1,0 +1,10 @@
+#Userdb/468781777213718529.txt
+#Sat Dec 24 23:15:33 KST 2022
+prd=93.0
+money=4.780902368018601E15
+heb=f
+name=오줘헌
+slat=0.0
+health=140600.0
+slt=0.0
+exp=59381.0

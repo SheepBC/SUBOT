@@ -1,0 +1,10 @@
+#Userdb/353350451607109633.txt
+#Sat Dec 31 20:49:16 KST 2022
+prd=97.0
+money=6523659.0
+heb=f
+name=kekemak
+slat=4.99999995E7
+health=573003.0
+slt=683887.0
+exp=42069.0

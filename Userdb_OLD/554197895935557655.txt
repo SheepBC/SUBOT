@@ -1,0 +1,10 @@
+#Userdb/554197895935557655.txt
+#Sat Nov 12 18:42:02 JST 2022
+prd=88.0
+money=1.000723E7
+heb=f
+name=김미누
+health=-4.0
+slat=0
+slt=0
+exp=1829.0

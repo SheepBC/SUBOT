@@ -1,0 +1,10 @@
+#Userdb/432360003970793472.txt
+#Thu Dec 08 19:23:14 KST 2022
+prd=23.0
+money=7.764185E8
+heb=f
+name=ٴBabyNakoٴ
+health=369880.0
+slat=0.0
+slt=0.0
+exp=43827.0

@@ -1,0 +1,10 @@
+#Userdb/336828850358976512.txt
+#Sat Dec 31 20:31:29 KST 2022
+prd=56.0
+heb=f
+money=5.375648585237103E15
+name=양불리
+slat=0.0
+health=662379.0
+slt=0.0
+exp=1.634411385E9

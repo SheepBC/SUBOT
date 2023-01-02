@@ -1,0 +1,10 @@
+#Userdb/787279684337532958.txt
+#Mon Sep 12 04:08:01 UTC 2022
+prd=43.0
+money=1.0068032E7
+heb=f
+name=조유리
+health=-243.0
+slat=0
+slt=0
+exp=2860.0

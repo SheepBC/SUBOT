@@ -1,0 +1,10 @@
+#Userdb/780978486684024842.txt
+#Fri Apr 29 13:22:48 UTC 2022
+prd=0.0
+money=1.0000001E8
+heb=f
+name=넌못
+health=-8.0
+slat=0
+slt=0
+exp=343.0

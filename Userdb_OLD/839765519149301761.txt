@@ -1,0 +1,10 @@
+#Userdb/839765519149301761.txt
+#Sat Dec 31 17:30:07 KST 2022
+prd=74.0
+money=1.229236528E9
+heb=f
+name=시우
+slat=0.0
+health=308398.0
+slt=0.0
+exp=50684.0

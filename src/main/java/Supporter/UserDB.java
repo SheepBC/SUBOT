@@ -12,23 +12,22 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static Supporter.UserDB.Path.*;
 import static Supporter.UserDB.Name.*;
 public class UserDB {
 
-    static class Path{
+
         final static String UserDBPath = "UserDB";
-        static String path;
-        static String HNO;
-        static String Property;
-        static String Stocks;
-        static String Items;
-        static String Stat;
-        static String Charts;
-        static String ChartsImages;
-        static String Stock;
-    }
-    static class Name {
+        String path;
+        String HNO;
+        String Property;
+        String Stocks;
+        String Items;
+        String Stat;
+        String Charts;
+        String ChartsImages;
+        String Stock;
+
+    class Name {
 
         static String Name = "Name";
         static String School = "School";
@@ -66,7 +65,7 @@ public class UserDB {
     public UserDB(User user){
         userid = user.getId();
         name = user.getName();
-        path =Path.UserDBPath+ "/"+userid;
+        path =UserDBPath+ "/"+userid;
         HNO = path+"/HealthNOthers.txt";
         Property = path+"/Properties.txt";
         Stat = path+"/Stats.txt";
@@ -79,7 +78,7 @@ public class UserDB {
     public UserDB(String uid){
         userid = uid;
         name = "미정";
-        path =Path.UserDBPath+ "/"+userid;
+        path =UserDBPath+ "/"+userid;
         HNO = path+"/HealthNOthers.txt";
         Property = path+"/Properties.txt";
         Stat = path+"/Stats.txt";
@@ -142,6 +141,10 @@ public class UserDB {
 
         setStock(Stock_Data.list().get(0),0,BigInteger.ZERO);
 
+    }
+
+    public String getPath(){
+        return path;
     }
 
     public BigInteger getAll_Property(){

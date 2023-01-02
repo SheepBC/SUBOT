@@ -28,6 +28,8 @@ public class main {
             UserDB userDB = new UserDB(id);
             BigDecimal bdm = new BigDecimal(String.valueOf(UDS.getMoney(id)));
             BigDecimal bde = new BigDecimal(String.valueOf(UDS.getExp(id)*10));
+            long h = Long.parseLong(String.valueOf(UDS.getHealth(id)).replace(".0",""));
+            userDB.setHealth(h);
             userDB.setMoney(bdm.toBigInteger());
             userDB.setName(UDS.getName(id));
             userDB.addMoney(bde.toBigInteger());

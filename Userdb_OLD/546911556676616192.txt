@@ -1,0 +1,10 @@
+#Userdb/546911556676616192.txt
+#Thu Nov 24 14:00:17 KST 2022
+prd=0.0
+money=1.0012502E7
+heb=f
+name=화가많은사람
+health=-2.0
+slat=0
+slt=0
+exp=1913.0

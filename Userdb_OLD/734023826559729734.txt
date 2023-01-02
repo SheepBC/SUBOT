@@ -1,0 +1,10 @@
+#Userdb/734023826559729734.txt
+#Wed May 18 11:42:38 UTC 2022
+prd=79.0
+money=0.0
+heb=f
+name=raming라밍
+health=3.0
+slat=0
+slt=0
+exp=1676.0

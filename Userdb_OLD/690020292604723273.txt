@@ -1,0 +1,10 @@
+#Userdb/690020292604723273.txt
+#Mon Apr 18 13:47:44 UTC 2022
+prd=42.0
+money=1.0E7
+heb=f
+name=박현수
+health=-11.0
+slat=0
+slt=0.0
+exp=620.0
