@@ -54,7 +54,7 @@ public class Work {
             }
         }
 
-        while (health >= 20){
+        while (health >= 20 & userDB.getHealth() > -1000){
             String[] mine = mine().split(" ");
             String type = mine[0];
             int num = Integer.parseInt(mine[1]);
@@ -85,7 +85,7 @@ public class Work {
 
     public String mine(){
         UserDB userDB = new UserDB(userid);
-        int addHealth = (int) (Math.random()*20)*-1;
+        int addHealth = (int) (Math.random()*40+1)*-1;
         int addExp = (int) (Math.random()*25)*+5;
         double r = SaveNLoad.getRandom(path+"mine.txt");
 
@@ -142,6 +142,74 @@ public class Work {
 
         return type+" "+num+" "+addPrice+" "+addHealth+" "+addExp;
 
+    }
+
+    public void Hard_Working(){
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        UserDB userDB = new UserDB(user);
+        if(userDB.getHealth() < -1500){
+            channel.sendMessage("건강이 부족합니다.").queue();
+            return;
+        }
+        BigInteger all_price = BigInteger.ZERO;
+        HashMap<String,Integer> lists = new HashMap<>();
+        long health = 25;
+        long addExp = 0;
+        if(arg.length >= 2){
+            if(Support.isLong(arg[1])){
+                health = Long.parseLong(arg[1]);
+            }
+        }
+        while (health>=25 & userDB.getHealth() > -1500){
+            String[] list = Hard_Work().split(" ");
+            long addHealth = Long.parseLong(list[0]);
+            long exp = Long.parseLong(list[1]);
+            BigInteger addPrice = new BigInteger(list[2]);
+            String type = list[3];
+
+            lists.putIfAbsent(type, 0);
+            lists.put(type,lists.get(type)+1);
+            health += addHealth;
+            all_price = all_price.add(addPrice);
+            addExp += exp;
+
+        }
+        String s = "";
+
+        for(String type:lists.keySet()){
+            s += type+": "+lists.get(type)+"개\n";
+        }
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setColor(Support.getRandomColor());
+        embed.setTitle(user.getName()+"님의 광질");
+        embed.addField(Support.unit(all_price)+"베리","```"+s+"```",true);
+        embed.setFooter("+"+addExp+" 경험치");
+        channel.sendMessageEmbeds(embed.build()).queue();
+    }
+
+    public String Hard_Work(){
+        UserDB userDB = new UserDB(userid);
+        int addHealth = (int) ((Math.random()*350)+200)*-1;
+        int addExp = (int) (Math.random()*25)*+5;
+        String type = "고강도일";
+        double p = Math.random()*1.125+1;
+        int r = (int) (Math.random() * 10);
+        if(r == 0){
+            p *= -0.85;
+            type = "병원비";
+        }
+        BigDecimal bd_sp = new BigDecimal(SugoData.getSP());
+        BigDecimal bd_p = new BigDecimal(String.valueOf(p));
+        BigInteger addPrice = bd_sp.multiply(bd_p).toBigInteger();
+
+        userDB.addExp(addExp);
+        userDB.addHealth(addHealth);
+        userDB.addMoney(addPrice);
+
+        return addHealth+" "+addExp+" "+addPrice+" "+type;
     }
 
 }

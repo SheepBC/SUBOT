@@ -1,26 +1,286 @@
 package Command;
 
+import Supporter.Support;
 import Supporter.UserDB;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public class Garmbing {
+    MessageReceivedEvent event;
+    String[] arg;
+    net.dv8tion.jda.api.entities.User user;
+    String userid;
+    MessageChannel channel;
 
-    private static BigInteger Common(UserDB userDB, BigInteger bi){
+    String notUser = "회원가입이 되어있지 않은 유저입니다.";
 
+    public Garmbing(MessageReceivedEvent event,String[] args){
+
+        this.event = event;
+        this.arg = args;
+        user = event.getAuthor();
+        userid = user.getId();
+        channel = event.getChannel();
+
+    }
+
+    public void Common(){
+        String command = "숩도박 [걸돈 or 올인]";
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        if(arg.length < 2){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        BigInteger price = BigInteger.ZERO;
+        UserDB userDB = new UserDB(user);
+        if(!arg[1].equalsIgnoreCase("올인") & !Support.isBigI(arg[1])){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        if(arg[1].equalsIgnoreCase("올인")){
+            price = userDB.getMoney();
+        }
+        else {
+            price = new BigInteger(arg[1]);
+        }
+
+        if(price.max(userDB.getMoney().add(BigInteger.ONE)).equals(price)){
+            channel.sendMessage("돈이 부족합니다.").queue();
+            return;
+        }
+        if(price.min(new BigInteger("99")).equals(price)){
+            channel.sendMessage("100베리 이상 거세요!!").queue();
+            return;
+        }
         double r = Math.random()*100;
         double b = 0;
         double H = 0;
 
         if( r < (H += 0.0001)) b = 100000000;
         else if( r < (H += 5)) b = 0;
-        else if( r < (H += 18)) b = 0.5;
+        else if( r < (H += 19)) b = 0.5;
         else if( r < (H += 19.9999)) b = 1;
-        else if( r < (H += 37)) b = 1.2;
+        else if( r < (H += 38)) b = 1.2;
         else if( r < (H += 15)) b = 1.5;
-        else if( r < (H += 5)) b = 2;
+        else if( r < (H += 3)) b = 2;
+        BigDecimal bd_price = new BigDecimal(price);
+        BigDecimal bd_b = new BigDecimal(String.valueOf(b));
+        BigDecimal bd_add_price = bd_price.multiply(bd_b).subtract(bd_price);
+        BigInteger add_price = bd_add_price.toBigInteger();
+        userDB.addMoney(add_price);
+        EmbedBuilder embed = new EmbedBuilder();
+        int addExp = (int) (Math.random()*100);
+        embed.setFooter("+"+addExp+"경험치");
+        embed.setTitle("도박 결과");
+        embed.setColor(Support.getRandomColor());
+        embed.addField("건돈",Support.unit(bd_price)+"베리",true);
+        embed.addField("배율",b+"배",true);
+        embed.addField("결과",Support.unit(bd_price.multiply(bd_b).toBigInteger())+"베리",true);
+        channel.sendMessageEmbeds(embed.build()).queue();
 
-        return null;
     }
+
+    public void Dice(){
+        String command = "숩주사위도박 [걸돈 or 올인]";
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        if(arg.length < 2){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        BigInteger price = BigInteger.ZERO;
+        UserDB userDB = new UserDB(user);
+        if(!arg[1].equalsIgnoreCase("올인") & !Support.isBigI(arg[1])){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        if(arg[1].equalsIgnoreCase("올인")){
+            price = userDB.getMoney();
+        }
+        else {
+            price = new BigInteger(arg[1]);
+        }
+
+        if(price.max(userDB.getMoney().add(BigInteger.ONE)).equals(price)){
+            channel.sendMessage("돈이 부족합니다.").queue();
+            return;
+        }
+        if(price.min(new BigInteger("99")).equals(price)){
+            channel.sendMessage("100베리 이상 거세요!!").queue();
+            return;
+        }
+        String[] die = {"\uD83C\uDFB2**1**","\uD83C\uDFB2**2**","\uD83C\uDFB2**3**","\uD83C\uDFB2**4**","\uD83C\uDFB2**5**","\uD83C\uDFB2**6**"};
+        String[] list = new String[2];
+        list[0] = die[(int) (Math.random()*die.length)];
+        list[1] = die[(int) (Math.random()*die.length)];
+        double b =0;
+        String g = "";
+        if(list[0].equalsIgnoreCase(list[1])){
+            g = "성공";
+            b = 2.5;
+        }else {
+            g = "실패";
+            b = 0.7;
+        }
+        BigDecimal bd_price = new BigDecimal(price);
+        BigDecimal bd_b = new BigDecimal(String.valueOf(b));
+        BigDecimal bd_add_price = bd_price.multiply(bd_b).subtract(bd_price);
+        BigInteger add_price = bd_add_price.toBigInteger();
+        userDB.addMoney(add_price);
+        EmbedBuilder embed = new EmbedBuilder();
+        int addExp = (int) (Math.random()*50);
+        embed.setFooter("+"+addExp+"경험치");
+        embed.setColor(Support.getRandomColor());
+        embed.setTitle("주사위도박 결과");
+        embed.addField("건돈",Support.unit(bd_price)+"베리",true);
+        embed.addField("**게임결과**",g+"/"+list[0]+"/"+list[1],true);
+        embed.addField("**결과**", Support.unit(bd_price.multiply(bd_b).toBigInteger())+"베리",true);
+        channel.sendMessageEmbeds(embed.build()).queue();
+    }
+
+    public void Slot_Machine(){
+        JDA jda = event.getJDA();
+        String command = "숩주사위도박 [걸돈 or 올인]";
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        if(arg.length < 2){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        BigInteger price = BigInteger.ZERO;
+        UserDB userDB = new UserDB(user);
+        if(!arg[1].equalsIgnoreCase("올인") & !Support.isBigI(arg[1])){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        if(arg[1].equalsIgnoreCase("올인")){
+            price = userDB.getMoney();
+        }
+        else {
+            price = new BigInteger(arg[1]);
+        }
+
+        if(price.max(userDB.getMoney().add(BigInteger.ONE)).equals(price)){
+            channel.sendMessage("돈이 부족합니다.").queue();
+            return;
+        }
+        if(price.min(new BigInteger("99")).equals(price)){
+            channel.sendMessage("100베리 이상 거세요!!").queue();
+            return;
+        }
+
+        String[] ss = {"1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣"};
+        String[] gg = new String[3];
+        double b = 1;
+        String n = "";
+        gg[0] = ss[(int) (Math.random()* ss.length)];
+        gg[1] = ss[(int) (Math.random()* ss.length)];
+        gg[2] = ss[(int) (Math.random()* ss.length)];
+        if((gg[0]+gg[1]+gg[2]).equalsIgnoreCase("2️⃣1️⃣8️⃣")){
+            b = 500;
+            n = "1등";
+            jda.retrieveUserById("336828850358976512").flatMap(net.dv8tion.jda.api.entities.User::openPrivateChannel)
+                    .queue(Channel -> {Channel.sendMessage(user.getAsMention()+"슬롯머신 1등당첨").queue();});
+        }else if((gg[0]+gg[1]+gg[2]).equalsIgnoreCase("4️⃣1️⃣5️⃣")){
+            b = -415;
+            n = "??등";
+            jda.retrieveUserById("336828850358976512").flatMap(User::openPrivateChannel)
+                    .queue(Channel -> {Channel.sendMessage(user.getAsMention()+"슬롯머신 -30당첨").queue();});
+        }else if(gg[0].equals(gg[1]) && gg[1].equals(gg[2])){
+            b = 30;
+            n = "2등";
+        }else if(gg[0].equals(gg[1]) || gg[1].equals(gg[2]) || gg[2].equals(gg[0])){
+            b =1.2;
+            n = "3등";
+        }else {
+            b = 0.5;
+            n = "꼴등";
+        }
+
+        BigDecimal bd_price = new BigDecimal(price);
+        BigDecimal bd_b = new BigDecimal(String.valueOf(b));
+        BigDecimal bd_add_price = bd_price.multiply(bd_b).subtract(bd_price);
+        BigInteger add_price = bd_add_price.toBigInteger();
+        userDB.addMoney(add_price);
+        EmbedBuilder embed = new EmbedBuilder();
+        int addExp = (int) (Math.random()*150);
+        embed.setFooter("+"+addExp+"경험치");
+        embed.setColor(Support.getRandomColor());
+        embed.setTitle("슬롯머신도박 결과");
+        embed.addField("건돈",Support.unit(bd_price)+"베리",true);
+        embed.addField("**게임결과**",n+"/"+gg[0]+gg[1]+gg[2],true);
+        embed.addField("**결과**", Support.unit(bd_price.multiply(bd_b).toBigInteger())+"베리",true);
+        channel.sendMessageEmbeds(embed.build()).queue();
+    }
+
+    public void Exp_Garmbing(){
+        String command = "숩경험치도박 [걸경험치 or 올인]";
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        if(arg.length < 2){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        BigInteger price = BigInteger.ZERO;
+        UserDB userDB = new UserDB(user);
+        if(!arg[1].equalsIgnoreCase("올인") & !Support.isBigI(arg[1])){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        if(arg[1].equalsIgnoreCase("올인")){
+            price = userDB.getExp();
+        }
+        else {
+            price = new BigInteger(arg[1]);
+        }
+
+        if(price.max(userDB.getExp().add(BigInteger.ONE)).equals(price)){
+            channel.sendMessage("경험치이 부족합니다.").queue();
+            return;
+        }
+        if(price.min(new BigInteger("99")).equals(price)){
+            channel.sendMessage("100경험치 이상 거세요!!").queue();
+            return;
+        }
+
+        double r = Math.random()*22;
+        int b = 0;
+        double H = 0;
+
+        if( r < (H += 1)) b = 1;
+        else if( r < (H += 5)) b = 5;
+        else if( r < (H += 10)) b = 10;
+        else if( r < (H += 5)) b = 15;
+        else if( r < (H += 1)) b = 20;
+        BigInteger d = new BigInteger(String.valueOf(b));
+        BigInteger addMoney = price.divide(d);
+        BigInteger addExp = addMoney.multiply(d).multiply(new BigInteger("-1"));
+        userDB.addExp(addExp);
+        userDB.addMoney(addMoney);
+
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("도박 결과");
+        embed.setColor(Support.getRandomColor());
+        embed.addField("사용된 경험치",Support.unit(addExp.multiply(new BigInteger("-1")))+"Exp",true);
+        embed.addField("교환 비율(돈:경험치)","1:"+b,true);
+        embed.addField("결과",Support.unit(addMoney)+"베리",true);
+        channel.sendMessageEmbeds(embed.build()).queue();
+    }
+
 
 }

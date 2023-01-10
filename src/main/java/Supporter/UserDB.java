@@ -1,6 +1,8 @@
 package Supporter;
 
 import Chart.Chart;
+import SugoData.SugoData;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 
 import java.io.File;
@@ -58,6 +60,7 @@ public class UserDB {
         static String Chart_Path = "Charts";
         static String Chart_P = "Chart_P";
         static String Chart_H = "Chart_H";
+        static String Chart_SP = "Chart_SP";
 
     }
     String userid;
@@ -149,7 +152,17 @@ public class UserDB {
 
     public BigInteger getAll_Property(){
         BigInteger ap = getMoney().add(getExp().divide(new BigInteger(String.valueOf(getAM_Exp_Change())))).subtract(getTax().add(getDebt()));
-        return ap;
+        BigInteger stock = getStock_All_Money();
+        return ap.add(stock);
+    }
+
+    public BigInteger getStock_All_Money(){
+        BigInteger stock = BigInteger.ZERO;
+        for(String id:Stock_Data.list()){
+            Stock_Data stock_data = new Stock_Data(id);
+            stock = stock.add(stock_data.getPrice().multiply(new BigInteger(String.valueOf(getStock_Num(id)).replace(".0",""))));
+        }
+        return stock;
     }
 
     public BigDecimal getAM_Luck(){
@@ -301,11 +314,11 @@ public class UserDB {
     }
 
     public BigInteger getTopProperty(){
-        return new BigInteger(SaveNLoad.loadP(Money,TopProperty));
+        return new BigInteger(SaveNLoad.loadP(Property,TopProperty));
     }
 
     public void setTopProperty(BigInteger bInt){
-        SaveNLoad.addP(Money,TopProperty,bInt.toString());
+        SaveNLoad.addP(Property,TopProperty,bInt.toString());
     }
 
     public void setTopProperty(int i){
@@ -338,11 +351,11 @@ public class UserDB {
     }
 
     public boolean getEconomy_Alarm(){
-        return Boolean.parseBoolean(SaveNLoad.loadP(Money,Economy_Alarm));
+        return Boolean.parseBoolean(SaveNLoad.loadP(Property,Economy_Alarm));
     }
 
     public void setEconomy_Alarm(Boolean b){
-        SaveNLoad.addP(Money,Economy_Alarm,String.valueOf(b));
+        SaveNLoad.addP(Property,Economy_Alarm,String.valueOf(b));
     }
 
     public BigInteger getMoney(){
@@ -350,7 +363,13 @@ public class UserDB {
     }
 
     public void setMoney(BigInteger bInt){
-        SaveNLoad.addP(Property,Money,bInt.toString());
+        if(bInt.min(BigInteger.ZERO).equals(bInt)){
+            addDebt(bInt.multiply(new BigInteger("-1")));
+            SaveNLoad.addP(Property,Money,BigInteger.ZERO.toString());
+        }
+        else {
+            SaveNLoad.addP(Property,Money,bInt.toString());
+        }
     }
 
     public void setMoney(int i){
@@ -420,11 +439,11 @@ public class UserDB {
     }
 
     public boolean getAuto_Tax(){
-        return Boolean.parseBoolean(SaveNLoad.loadP(Money,Auto_Tax));
+        return Boolean.parseBoolean(SaveNLoad.loadP(Property,Auto_Tax));
     }
 
     public void setAuto_TAx(Boolean b){
-        SaveNLoad.addP(Money,Auto_Tax,String.valueOf(b));
+        SaveNLoad.addP(Property,Auto_Tax,String.valueOf(b));
     }
 
     public BigInteger getDebt(){
@@ -465,7 +484,7 @@ public class UserDB {
     }
 
     public float getDebt_Rate(){
-        String rate = SaveNLoad.loadP(Money,Debt_Rate);
+        String rate = SaveNLoad.loadP(Property,Debt_Rate);
         if(rate.equals("Debt_Flow")){
             return 0.1f; // 나중에 수정
         }
@@ -476,10 +495,10 @@ public class UserDB {
 
     public void setDebt_Rate(boolean isFlow){
         if(isFlow){
-            SaveNLoad.addP(Money,Debt_Rate,"Debt_Flow");
+            SaveNLoad.addP(Property,Debt_Rate,"Debt_Flow");
         }
         else{
-            SaveNLoad.addP(Money,Debt_Rate,"현재금리가져오기");
+            SaveNLoad.addP(Property,Debt_Rate,"현재금리가져오기");
         }
     }
 
@@ -655,6 +674,7 @@ public class UserDB {
 
         Chart chart_H = new Chart(cp+Chart_H);
         Chart chart_P = new Chart(cp+Chart_P);
+        Chart chart_SP = new Chart(cp+Chart_SP);
 
         Date date = new Date();
         if(date.getMinutes() < 30){
@@ -670,13 +690,60 @@ public class UserDB {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println(new Date()+" "+userid);
+                //System.out.println(userid);
+                TopUpdate();
                 chart_H.add(String.valueOf(getHealth()));
                 chart_P.add(getAll_Property().toString());
+                chart_SP.add(getAll_Property().divide(SugoData.getSP()).toString());
             }
         },date,30*min);
 
 
+    }
+
+    public void Debt_update(UserDB userDB){
+
+        int second = 1000;
+        int min = 60*second;
+        long hour = 60*min;
+
+        Date date = new Date();
+        date.setHours(1);
+        Timer timer = new Timer();
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                BigDecimal bd = new BigDecimal(userDB.getDebt());
+                BigDecimal addP = new BigDecimal("0.005");
+                BigInteger addPrice = bd.multiply(addP).toBigInteger();
+                userDB.addDebt(addPrice);
+            }
+        },date,24*hour);
+    }
+
+    public void TopUpdate(){
+        if(getAll_Property().max(getTopProperty()).equals(getAll_Property())){
+            setTopProperty(getAll_Property());
+        }
+    }
+
+    public void overwork(JDA jda){
+        if(getHealth() < -2000){
+            if(getAll_Property().min(BigInteger.ZERO).equals(BigInteger.ZERO)){
+                SugoData.addMoney(getAll_Property());
+            }
+            setMoney("0");
+            for (String id:Stock_Data.list()){
+                setStock(id,0,new BigInteger("0"));
+            }
+            setDebt(0);
+            setExp(0);
+            setHealth(0);
+            setTired(0);
+            jda.retrieveUserById(userid).flatMap(User::openPrivateChannel).queue(privateChannel ->
+                    privateChannel.sendMessage("과로사 하였습니다.").queue());
+        }
     }
 
 

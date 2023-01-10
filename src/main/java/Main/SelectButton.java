@@ -1,6 +1,11 @@
 package Main;
 
 import ButtonCommand.recommend;
+import Command.Basic;
+import Command.Maneger;
+import Command.Test;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageReference;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -29,6 +34,17 @@ public class SelectButton implements Runnable{
         if(id.startsWith("UserRank")){
             Command.User.FullRank(event,id.replace("UserRank",""));
         }
+        if(id.equalsIgnoreCase("Inquiry")){
+            Basic.Button_Inquiry(event);
+        }
+        if(id.equalsIgnoreCase("Inquiry_Reply")){
+            Maneger.Button_Inquiry_Reply(event);
+        }
+        if(id.startsWith("UserBankruptcy")){
+            Command.User.Button_bankruptcy(event);
+        }
+
+
     }
 
 }

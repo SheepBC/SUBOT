@@ -47,7 +47,7 @@ public class Stock {
         for (String id:Stock_Data.list()){
             Stock_Data stock_data = new Stock_Data(id);
             menu.addOption(stock_data.getName(),id,"ID:"+id);
-            embed.addField(id,price(stock_data),true);
+            embed.addField(stock_data.getName()+"("+id+")",price(stock_data),true);
         }
         channel.sendMessageEmbeds(embed.build()).setActionRow(menu.build()).queue();
 
@@ -57,6 +57,7 @@ public class Stock {
         String p = "";
         BigDecimal now = new BigDecimal(stock_data.getPrice()).multiply(new BigDecimal("100"));
         BigDecimal last = new BigDecimal(stock_data.getLast_Price());
+        last = last.equals(BigDecimal.ZERO) ? BigDecimal.ONE:last;
         BigDecimal up_P = now.divide(last,2, RoundingMode.HALF_EVEN).subtract(new BigDecimal("100"));
         String add = up_P.min(BigDecimal.ZERO).equals(BigDecimal.ZERO) ? "+":"";
         p += Support.unit(stock_data.getPrice())+"("+add+up_P+"%)";
@@ -270,7 +271,7 @@ public class Stock {
                     }
                 }
             }
-        },min,min);
+        },2*second,2*second);
 
     }
 

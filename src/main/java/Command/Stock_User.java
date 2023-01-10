@@ -126,7 +126,7 @@ public class Stock_User {
         Stock_Data stock_data = new Stock_Data(id);
         BigInteger addMoney = stock_data.getPrice().multiply(new BigInteger(String.valueOf((int)(num*-1))));
         userDB.addMoney(addMoney);
-        stock_data.addSelling_Price(new BigInteger(String.valueOf((int)(num))));
+        stock_data.addSelling_Num(new BigInteger(String.valueOf((int)(num))));
         stock_data.addWeek_Selling_Price(new BigInteger(String.valueOf((int)(num))));
         String re = stock_data.getName()+"을(를) "+Support.unit(addMoney.multiply(new BigInteger("-1")))+"베리로 "+(int)(num)+"주 매수하였습니다.";
         return re;
@@ -214,7 +214,7 @@ public class Stock_User {
         BigInteger price = stock_data.getPrice().multiply(new BigInteger(String.valueOf((int) (num))));
         userDB.addMoney(price);
         userDB.addStock_Num(id,num*-1);
-        stock_data.addSelling_Price(new BigInteger(String.valueOf((int) (num*-1))));
+        stock_data.addSelling_Num(new BigInteger(String.valueOf((int) (num*-1))));
         stock_data.addWeek_Selling_Price(new BigInteger(String.valueOf((int)(num*-1))));
         String re = stock_data.getName()+"을(를) "+Support.unit(price)+"베리로 "+(int)(num)+"주 매도하였습니다.";
         return re;

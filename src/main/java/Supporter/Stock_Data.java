@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import Chart.Chart;
+import Main.main;
+import SugoData.SugoData;
+
+import javax.naming.spi.DirectoryManager;
 
 import static Supporter.Stock_Data.Key.*;
 
@@ -57,9 +61,39 @@ public class Stock_Data {
         //System.out.println(id);
     }
 
+    public BigInteger getStart_Num(){
+        String sn = SaveNLoad.loadP(inform,Start_Num);
+        return new BigInteger(sn);
+    }
+
+    public void setStart_Num(BigInteger bi){
+        SaveNLoad.addP(inform,Start_Num,bi.toString());
+    }
+
+    public void addStart_Price(BigInteger bi){
+        BigInteger sp = getStart_Num().add(bi);
+        setStart_Num(sp);
+    }
+
+    public BigInteger getStart_All_Price(){
+        String p = SaveNLoad.loadP(inform,Start_All_Price);
+        return new BigInteger(p);
+    }
+
+    public void setStart_All_Price(BigInteger bi){
+        SaveNLoad.addP(inform,Start_All_Price,bi.toString());
+    }
+
+    public void addStart_All_Price(BigInteger bi){
+        BigInteger ap = getStart_All_Price().add(bi);
+        setStart_All_Price(ap);
+    }
+
+
     public BigInteger getPrice(){
         BigInteger all = getAll_Price();
         BigInteger num = getALl_Num();
+        //System.out.println(id+" "+getALl_Num()+" "+all);
         return all.divide(num);
     }
 
@@ -82,6 +116,13 @@ public class Stock_Data {
 
     public BigInteger getAll_Price(){
         String p = SaveNLoad.loadP(inform,All_Price);
+        BigInteger rt;
+        try {
+            rt = new BigInteger(p);
+        }catch (Exception e){
+            System.out.println("주식총가격 오류 "+p+" "+id);
+            return getAll_Price();
+        }
         return new BigInteger(p);
     }
 
@@ -96,7 +137,18 @@ public class Stock_Data {
 
     public BigInteger getALl_Num(){
         String an = SaveNLoad.loadP(inform,Num);
+        BigInteger rt;
+        try {
+            rt = new BigInteger(an);
+        }catch (Exception e){
+            System.out.println("주식총갯수 오류 "+an+" "+id);
+            return getALl_Num();
+        }
+        //System.out.println(id+ " "+an);
         return new BigInteger(an);
+    }
+    public void setALl_Num(BigInteger num){
+        SaveNLoad.addP(inform,Num,num.toString());
     }
 
     public BigInteger getSelling_Num(){
@@ -108,7 +160,7 @@ public class Stock_Data {
         SaveNLoad.addP(inform,Selling_Num,bi.toString());
     }
 
-    public void addSelling_Price(BigInteger bi){
+    public void addSelling_Num(BigInteger bi){
         BigInteger sp = getSelling_Num().add(bi);
         setSelling_Num(sp);
     }
@@ -147,7 +199,8 @@ public class Stock_Data {
         return Integer.parseInt(getTimes()[1]);
     }
 
-    private void setTimes(int m,int am){
+
+    public void setTimes(int m,int am){
         String s = m+"/"+am;
         SaveNLoad.addP(inform,Time,s);
     }
@@ -159,41 +212,69 @@ public class Stock_Data {
     public void update_Price(){
         int r1 = (int)(Math.random()*10);
         setLast_Price(getPrice());
-        if(r1<2){
-            update_Price_P();
-        }else if(r1<6){
-            update_Price_C();
-        }else {
-            update_Price_C_P();
+        if(r1<4){
+            //+
+            update_Price_A();
         }
+        else {
+            //*
+            if(getUpdate_Type().equalsIgnoreCase("P")){
+                update_Price_P_P();
+            }
+            else {
+                update_Price_C_P();
+            }
+        }
+        if(getPrice().min(new BigInteger("1000")).equals(getPrice())){
+            addPrice(new BigInteger("600"));
+        }if(getPrice().min(new BigInteger("0")).equals(getPrice())){
+            ArrayList<String> list = new ArrayList<>();
+            for(String userid:UserDB.getUserList()){
+                UserDB userDB = new UserDB(userid);
+                if(userDB.getStock_Num(id) != 0){
+                    list.add(userid);
+                }
+            }
+            main.alarm(getName()+"이 상장폐지 하였습니다.",list.toArray(new String[0]));
+            reset();
+        }
+
         chart.add(getPrice().toString());
     }
 
-    private void update_Price_C() {
+    private void update_Price_A() {
         int aP = (int) SaveNLoad.getRandom("Stock/Common_Update.txt");
-        if((int) (Math.random()*2.5) == 0) aP *= -1;
+        double mrp = 2.5+SugoData.addMRP();
+        if((int) (Math.random()*mrp) == 0) aP *= -1;
+        if(getUpdate_Type().equalsIgnoreCase("C") & Math.random()*10 <3) aP += 1500;
         addPrice(new BigInteger(String.valueOf(aP)));
         if(getPrice().max(BigInteger.ZERO).equals(BigInteger.ZERO)){
             setPrice(new BigInteger("1000"));
         }
     }
 
-    private void update_Price_P() {
-        double aPP = SaveNLoad.getRandom(Update);
-        if((int) (Math.random()*2.000012) == 0) aPP *= -1;
+    private void update_Price_C_P() {
+        double aPP = SaveNLoad.getRandom(Update)/100;
+        //System.out.println(id+" "+aPP);
+        double mrp = 2.011175+SugoData.addMRP();
+        if((int) (Math.random()*mrp) == 0) aPP *= -1;
+        if(Math.random()*100 < 0.5) aPP+= 1;
+        if(Math.random()*100 < 0.1) aPP+= 2;
+        if(Math.random()*100 < 0.3) aPP = Math.abs(aPP)*-1;
         BigDecimal nP = new BigDecimal(getPrice());
         nP = nP.multiply(BigDecimal.ONE.add(new BigDecimal(String.valueOf(aPP))));
         setPrice(nP.toBigInteger());
     }
 
-    private void update_Price_C_P(){
-       double d = Support.noise(getSeed(),getSmooth(),getNoise_X())/2;
-       addNoise_X(1);
-       double p = 1+d;
-       BigDecimal nP = new BigDecimal(getPrice());
-       nP = nP.multiply(new BigDecimal(String.valueOf(p)));
-       setPrice(nP.toBigInteger());
-       //System.out.println(getPrice()+" "+p);
+    private void update_Price_P_P(){
+        double mrp = 5.19-SugoData.addMRP();
+        double d = Support.noise(getSeed(),getSmooth(),getNoise_X())/mrp;
+        addNoise_X(1);
+        double p = 1+d;
+        BigDecimal nP = new BigDecimal(getPrice());
+        nP = nP.multiply(new BigDecimal(String.valueOf(p)));
+        setPrice(nP.toBigInteger());
+        //System.out.println(getPrice()+" "+p);
     }
 
     public int getSeed(){
@@ -235,6 +316,9 @@ public class Stock_Data {
     public String getName(){
         return SaveNLoad.loadP(inform,Name);
     }
+    public void setName(String name){
+        SaveNLoad.addP(inform,Name,name);
+    }
 
     public String getColor(){
         return SaveNLoad.loadP(inform,Color);
@@ -242,6 +326,27 @@ public class Stock_Data {
 
     public double getLeftNum(){
         return getALl_Num().subtract(getSelling_Num()).doubleValue();
+    }
+
+    public void reset(){
+        setALl_Num(getStart_Num());
+        setSelling_Num(BigInteger.ZERO);
+        setWeek_Selling_Num(BigInteger.ZERO);
+        setAll_Price(getStart_All_Price());
+        for(String id:UserDB.getUserList()){
+            UserDB userDB = new UserDB(id);
+            if(userDB.getStock_Num(this.id) != 0){
+                //System.out.println(userDB.getName()+" "+this.id);
+                userDB.setStock(this.id,0,BigInteger.ZERO);
+            }
+        }
+        setSeed((int) (Math.random() * 1000000));
+        setSmooth((int) (Math.random() * 255+1));
+        setNoise_x(0);
+        setLast_Price(getPrice());
+        File file = new File(getChart().getPath());
+        Support.deleteFilesRecursively(file);
+        //System.out.println(id+" "+getPrice()+" "+b);
     }
 
 

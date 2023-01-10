@@ -103,6 +103,8 @@ public class Support {
             r = "-"+r;
         }
 
+        if(r.equalsIgnoreCase("")) r = "0";
+
         return r.equals("-") ? "0":r;
     }
     public static boolean isLong(String s){
@@ -375,6 +377,19 @@ public class Support {
         }catch (Exception e){
             return false;
         }
+    }
+
+    public static boolean deleteFilesRecursively(File rootFile) {
+        File[] allFiles = rootFile.listFiles();
+        if (allFiles != null) {
+            for (File file : allFiles) {
+                deleteFilesRecursively(file);
+            }
+        }
+        //System.out.println("Remove file: " + rootFile.getPath());
+        boolean b = rootFile.delete();
+        rootFile.exists();
+        return b;
     }
 
 

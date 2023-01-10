@@ -94,8 +94,10 @@ public class User {
         embed.setTitle(userDB.getName()+"님의 정보");
         embed.addField("**이름**",userDB.getName(),true);
         //embed.addField("**학교**",userDB.getSchool().equals("지정 안됨") ? "지정 안됨":"지정 됨",false);
+        BigInteger sp = userDB.getAll_Property().divide(SugoData.getSP());
         embed.addField("**재산**",
-                "돈: "+"총자산: "+Support.unit(userDB.getAll_Property()),false);
+                "총자산: "+Support.unit(userDB.getAll_Property())+"\n"+
+                "SP: "+Support.unit(sp)+"SP",false);
 
         String sleep = "\n잠: "+Support.time_Unit(userDB.getSleepTime())+"/"+Support.time_Unit(userDB.getAll_SleepTime());
 
@@ -105,15 +107,18 @@ public class User {
                         +(userDB.isHealth() ? "\n회복중":"")
                         +(userDB.isSleeping() ? sleep:"")
                 ,false);
+        /*
         embed.addField("**스탯**",
                 /*
                 "도둑질: "+userDB.getStealing()+"강"
                         +"\n방어력: "+userDB.getDefense()+"강"
 
-                 */
+
                         "\n행운: "+userDB.getLuck()+"강"
                         +"\n회복력: "+userDB.getResilience()+"강"
                 ,true);
+
+         */
 
         channel.sendMessageEmbeds(embed.build()).queue();
     }
@@ -163,16 +168,17 @@ public class User {
         }
 
         UserDB userDB = new UserDB(user);
+        BigInteger sp = userDB.getAll_Property().divide(SugoData.getSP());
         EmbedBuilder embed = new EmbedBuilder();
         embed.setColor(Support.getRandomColor());
         embed.setTitle(user.getName()+"님의 재산");
         embed.addField("**재산**",
                 "돈: "+Support.unit(userDB.getMoney())
                         + "\n빚: "+Support.unit(userDB.getDebt())
-                        + "\n미납세: "+Support.unit(userDB.getTax())
                         + "\n경험치: "+Support.unit(userDB.getExp())
                         + "\n-----------------"
-                        + "\n총자산: "+Support.unit(userDB.getAll_Property()),false);
+                        + "\n총자산: "+Support.unit(userDB.getAll_Property())
+                        +"\nSP: "+Support.unit(sp)+"SP",false);
 
         channel.sendMessageEmbeds(embed.build()).queue();
     }
@@ -248,19 +254,25 @@ public class User {
 
     public void Rank() {
 
+        SelectMenu.Builder menu = SelectMenu.create("UserRank")
+                .addOption("돈", "돈")
+                .addOption("자산(재산)", "재산")
+                .addOption("건강", "건강")
+                .addOption("경험치", "경험치")
+                .addOption("빚", "빚");
+
         if (arg.length == 1) {
 
-            SelectMenu.Builder menu = SelectMenu.create("UserRank")
-                    .addOption("돈", "돈")
-                    .addOption("자산(재산)", "재산")
-                    .addOption("건강", "간강")
-                    .addOption("경험치", "경험치")
-                    .addOption("빚", "빚")
                     //.addOption("스탯", "스탯")
-                    .addOption("미납세", "미납세")
-                    .addOption("죽거나 파산힌 횟수", "죽거나파산한횟수");
+                    //.addOption("미납세", "미납세")
+                    //.addOption("죽거나 파산힌 횟수", "죽거나파산한횟수");
 
-            channel.sendMessage("**숩순위 [돈/자산(재산)/건강/경험치/빚/미납세/죽거나파산한횟수]**").setActionRow(menu.build()).queue();
+            channel.sendMessage("**숩순위 (돈/자산(재산)/건강/경험치/빚)**").setActionRow(menu.build()).queue();
+            return;
+        }
+        String[] list = {"돈","자산","재산","건강","경험치","빚"};
+        if(!List.of(list).contains(arg[1])){
+            channel.sendMessage("**숩순위 (돈/자산(재산)/건강/경험치/빚)**").setActionRow(menu.build()).queue();
             return;
         }
 
@@ -270,6 +282,7 @@ public class User {
 
 
     public void User_Rank_System(String s) {
+        System.out.println(s);
         String path = "";
         String key = "";
         boolean isOne = true;
@@ -281,7 +294,6 @@ public class User {
                 break;
             case "재산":
             case "자산":
-            case "죽거나파산한횟수":
                 isOne = false;
                 break;
             case "건강":
@@ -295,10 +307,6 @@ public class User {
             case "빚":
                 path = "Properties.txt";
                 key = "Debt";
-                break;
-            case "미납세":
-                path = "Properties.txt";
-                key = "Tax";
                 break;
             default:
                 return;
@@ -368,8 +376,8 @@ public class User {
             });
 
             EmbedBuilder embed = new EmbedBuilder();
-
-            String title = arg[1] == null ? "":arg[1];
+            String title = s;
+            //String title = arg[1] == null ? "":arg[1];
             embed.setTitle(title);
             embed.setColor(Support.getRandomColor());
             int i = 1;
@@ -620,7 +628,7 @@ public class User {
     }
 
     public void chart(){
-        String command = "숩유저그래프 (건강/자산) (오늘/일주일/한달/일년/전체)";
+        String command = "숩유저그래프 (건강/자산/SP) (오늘/일주일/한달/일년/전체)";
         if(!UserDB.isUser(userid)){
             channel.sendMessage(notUser).queue();
             return;
@@ -628,16 +636,16 @@ public class User {
         String days = "전체";
         String[] day_list = {"일주일","한달","일년","전체","오늘"};
         String type = "자산";
-        String[] type_list = {"건강","자산"};
+        String[] type_list = {"건강","자산","SP"};
         if(arg.length == 2){
             if(List.of(day_list).contains(arg[1])) days = arg[1];
-            else if(List.of(type_list).contains(arg[1])) type = arg[1];
+            else if(List.of(type_list).contains(arg[1].toUpperCase(Locale.ROOT))) type = arg[1].toUpperCase(Locale.ROOT);
             else {
                 channel.sendMessage(command).queue();
                 return;
             }
         }else if(arg.length >= 3){
-            if(List.of(type_list).contains(arg[1])) type = arg[1];
+            if(List.of(type_list).contains(arg[1].toUpperCase(Locale.ROOT))) type = arg[1].toUpperCase(Locale.ROOT);
             else {
                 channel.sendMessage(command).queue();
                 return;
@@ -655,14 +663,18 @@ public class User {
     }
 
     public String makeChart(String days,String type){
-
+        String danwe = "berry";
         String type_E = "";
         switch (type){
             case "건강":
                 type_E = "Chart_H";
+                danwe = "health";
                 break;
             case "자산":
                 type_E = "Chart_P";
+                break;
+            case "SP":
+                type_E = "Chart_SP";
                 break;
         }
 
@@ -701,7 +713,7 @@ public class User {
             start_time = check_time;
         }
 
-        makeLine_Chart(path,id.replace("/","-")+"("+start_time+"~"+LocalDate.now()+")/Day/Berry",id,colors, cds);
+        makeLine_Chart(path,id.replace("/","-")+"("+start_time+"~"+LocalDate.now()+")/Day/"+danwe,id,colors, cds);
         return path;
     }
 
@@ -711,6 +723,125 @@ public class User {
         long c = Long.parseLong(checkTime.replace("-",""));
         if(s < c) return true;
         return false;
+    }
+
+    public void setAlarm(){
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        UserDB userDB = new UserDB(user);
+        if(userDB.getEconomy_Alarm()){
+            userDB.setEconomy_Alarm(false);
+            channel.sendMessage("경제 알람이 꺼져습니다.").queue();
+        }
+        else {
+            userDB.setEconomy_Alarm(true);
+            channel.sendMessage("경제 알람이 켜져습니다.").queue();
+        }
+    }
+
+    public void loan(){
+        String command = "숩대출 [금액]";
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        if(arg.length < 2){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        String sp = arg[1];
+        if(!Support.isBigI(sp)){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        BigInteger price = new BigInteger(sp);
+        if(price.min(BigInteger.ZERO).equals(price)){
+            channel.sendMessage("돈을 갚으 시려면 갚기를 쳐주세요").queue();
+            return;
+        }
+        UserDB userDB = new UserDB(user);
+        userDB.addMoney(price);
+        userDB.addDebt(price);
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(user.getName()+"님의 대출");
+        embed.addField("대출한 금액",Support.unit(price)+"베리",true);
+        embed.setFooter("일이자율 0.5%");
+        channel.sendMessageEmbeds(embed.build()).queue();
+
+    }
+
+    public void pay_back(){
+        String command = "숩갚기 [금액]";
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        if(arg.length < 2){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        String sp = arg[1];
+        if(!Support.isBigI(sp)){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        BigInteger price = new BigInteger(sp);
+        if(price.min(BigInteger.ZERO).equals(price)){
+            channel.sendMessage("대출하실려면 **숩대출**로").queue();
+            return;
+        }
+        UserDB userDB = new UserDB(user);
+        if(price.max(userDB.getMoney()).equals(price)){
+            channel.sendMessage("돈이 부족합니다.").queue();
+            return;
+        }
+        if(price.max(userDB.getDebt()).equals(price)){
+            price = userDB.getDebt();
+        }
+        price = price.multiply(new BigInteger("-1"));
+        userDB.addMoney(price);
+        userDB.addDebt(price);
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(user.getName()+"님의 대출 갚기");
+        embed.addField("갚은 금액",Support.unit(sp)+"베리",true);
+        embed.addField("남은 금액",Support.unit(userDB.getDebt())+"베리",true);
+        embed.setFooter("일이자율 0.5%");
+        channel.sendMessageEmbeds(embed.build()).queue();
+
+    }
+
+    public void bankruptcy(){
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        Button button = Button.primary("UserBankruptcy"+userid, "파산신청하기");
+        event.getMessage().reply("파산을 신청하시려면 밑에 버튼을 눌려주세요!!").setActionRow(button).queue();
+    }
+
+    public static void Button_bankruptcy(ButtonInteractionEvent event){
+        String button_userid = event.getButton().getId().replace("UserBankruptcy","");
+        String userid = event.getUser().getId();
+        if(!button_userid.equalsIgnoreCase(userid)){
+            event.getChannel().sendMessage("파산 신청을 하시려면 숩파산을 눌려주세요.").queue();
+            return;
+        }
+        UserDB userDB = new UserDB(event.getUser());
+        if(userDB.getAll_Property().min(BigInteger.ZERO).equals(BigInteger.ZERO)){
+            SugoData.addMoney(userDB.getAll_Property());
+        }
+        userDB.setMoney("0");
+        for (String id:Stock_Data.list()){
+            Stock_Data stock_data = new Stock_Data(id);
+            stock_data.addSelling_Num(new BigInteger(String.valueOf(userDB.getStock_Num(id)*-1)));
+            userDB.setStock(id,0,new BigInteger("0"));
+        }
+        userDB.setDebt(0);
+        userDB.setExp(0);
+        event.getMessage().reply("파산하였습니다.").queue();
+
     }
 
 

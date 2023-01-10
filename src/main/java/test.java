@@ -1,14 +1,20 @@
+import SugoData.SugoData;
 import Supporter.SaveNLoad;
+import Supporter.Stock_Data;
 import Supporter.UserDB;
 
+import java.awt.desktop.SystemEventListener;
+import java.io.*;
 import java.util.HashMap;
-
+//5375665143525415
 public class test {
 
     public static void main(String[] args) {
-        UserDB userDB = new UserDB("336828850358976512");
-        UserDB userDB1 = new UserDB("353350451607109633");
-        System.out.println(userDB.getName()+" "+userDB.getPath());
-        System.out.println(userDB1.getName()+" "+userDB1.getPath());
+        for (String id: Stock_Data.list()){
+            Stock_Data stock_data = new Stock_Data(id);
+            System.out.println(id);
+            stock_data.getAll_Price();
+        }
+
     }
 }

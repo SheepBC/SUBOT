@@ -2,6 +2,8 @@ package Main;
 
 import Command.*;
 import SugoData.SugoData;
+import Supporter.UserDB;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -24,26 +26,53 @@ public class MessageReceived implements Runnable {
     @Override
     public void run() {
 
+        if(main.isBackup) return;
+
         onMessageEvent();
 
         if(CommandCheck("")) return;
+        ManagerCommand();
         BasicCommand();
         Recommend();
         Number();
         User();
         User_Health();
         Stock();
+        Reply();
         //Enhance();
 
         Test();
 
    }
 
+   void Reply(){
+        if(!event.getMessage().getType().name().equalsIgnoreCase("INLINE_REPLY")) return;
+        Message reply_message = event.getMessage().getReferencedMessage();
+   }
+
+   void ManagerCommand(){
+        if(!event.getAuthor().getId().equalsIgnoreCase("336828850358976512")) return;
+        Maneger maneger = new Maneger(event,args);
+       if(CommandCheck("백업")){
+           maneger.BackUp();
+       }
+       if(CommandCheck("봇끄기")){
+           maneger.Stop();
+       }
+       if(CommandCheck("사용횟수")){
+           maneger.use_num();
+       }
+   }
+
     void onMessageEvent(){
         User user = new User(event,args);
-
         user.addExp();
         user.addTired();
+        if(UserDB.isUser(event.getAuthor().getId())){
+            UserDB userDB = new UserDB(event.getAuthor());
+            userDB.TopUpdate();
+            userDB.overwork(event.getJDA());
+        }
     }
     void BasicCommand(){
        Basic basic = new Basic(event);
@@ -78,6 +107,13 @@ public class MessageReceived implements Runnable {
        if(CommandCheck("tmi","설명서")){
            event.getChannel().sendFile(new File("others/tmi/SUGO-Tmi-v"+ SugoData.getVersion+".hwp")).queue();
        }
+        if(CommandCheck("문의")){
+            basic.Inquiry();
+        }
+        if(CommandCheck("평균유저그래프","평균그래프")){
+            Basic_Chart basic_chart = new Basic_Chart(event,args);
+            basic_chart.chart();
+        }
    }
     void Recommend(){
         Recommend recommend = new Recommend(event,args);
@@ -136,9 +172,11 @@ public class MessageReceived implements Runnable {
         if(CommandCheck("건강")){
             user.inform_Health();
         }
+        /*
         if(CommandCheck("스탯")){
             user.inform_Stat();
         }
+         */
         if(CommandCheck("아이템")){
             user.inform_Item();
         }
@@ -154,9 +192,36 @@ public class MessageReceived implements Runnable {
         if(CommandCheck("유저그래프")){
             user.chart();
         }
+        if(CommandCheck("경제알람")){
+            user.setAlarm();
+        }
+        if(CommandCheck("대출")){
+            user.loan();
+        }
+        if(CommandCheck("갚기")){
+            user.pay_back();
+        }
+        if(CommandCheck("파산")){
+            user.bankruptcy();
+        }
         Work work = new Work(event,args);
         if(CommandCheck("광질")){
             work.mining();
+        }
+        if(CommandCheck("고강도일")){
+            work.Hard_Working();
+        }
+        Garmbing garmbing = new Garmbing(event,args);
+        if(CommandCheck("도박")){
+            garmbing.Common();
+        }
+        if(CommandCheck("주사위도박")){
+            garmbing.Dice();
+        }
+        if(CommandCheck("슬롯머신")){
+            garmbing.Slot_Machine();
+        }if(CommandCheck("경험치도박")){
+            garmbing.Exp_Garmbing();
         }
     }
 
@@ -218,7 +283,12 @@ public class MessageReceived implements Runnable {
     boolean CommandCheck(String... commands){
         for(String command:commands){
             for(String prefix:prefixes){
-                if(args[0].equalsIgnoreCase(prefix+command)) return  true;
+                if(args[0].equalsIgnoreCase(prefix+command)){
+                    main.use++;
+                    if(!main.users.contains(event.getAuthor().getId())){
+                        main.users.add(event.getAuthor().getId());}
+                    return  true;
+                }
             }
         }
         return false;

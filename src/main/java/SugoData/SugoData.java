@@ -1,18 +1,28 @@
 package SugoData;
 
+import Chart.Chart;
 import Supporter.SaveNLoad;
 import Supporter.Support;
 import Supporter.UserDB;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class SugoData {
 
     public static String DataPath = "Sub/Data.txt";
-    public String LogPath = "Sub/subLog.log";
-
+    public static String ChartPath = "Sub/Charts/";
+    public static String sp_m = "SP_Price";
+    public static String sg_m = "SG_Money";
+    public static String sg_sp = "SG_SP";
+    public static String am_h = "AM_Health";
     public static String version = "version";
     public static String money = "money";
     public static String tax = "tax";
@@ -80,4 +90,50 @@ public class SugoData {
         return am.toBigInteger().divide(new BigInteger("2598810490"));
     }
 
+    public static void UpdateChart(){
+        int second = 1000;
+        int min = 60*second;
+
+        Chart chart_sp_m = new Chart(ChartPath+sp_m);
+        Chart chart_sg_m = new Chart(ChartPath+sg_m);
+        Chart chart_sg_sp = new Chart(ChartPath+sg_sp);
+        Chart chart_am_h = new Chart(ChartPath+am_h);
+
+
+        Date date = new Date();
+        if(date.getMinutes() < 30){
+            date.setMinutes(30);
+        }
+        else {
+            date.setMinutes(0);
+            date.setHours(date.getHours()+1);
+        }
+
+        Timer timer = new Timer();
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                chart_sp_m.add(getSP().toString());
+                chart_sg_m.add(getMoney().toString());
+                chart_sg_sp.add(getMoney().divide(getSP()).toString());
+                ArrayList<BigDecimal> list = new ArrayList<BigDecimal>();
+                for(String id:UserDB.getUserList()){
+                    UserDB userDB = new UserDB(id);
+                    list.add(new BigDecimal(String.valueOf(userDB.getHealth())));
+                }
+                chart_am_h.add(Support.getAM_Num(list.toArray(new BigDecimal[0])).toBigInteger().toString());
+            }
+        },date,30*min);
+    }
+
+    public static double addMRP(){
+        BigDecimal sp = new BigDecimal(getSP());
+        BigDecimal spm = new BigDecimal("330000");
+        int b = sp.min(spm).equals(sp) ? 1:-1;
+        BigDecimal mrp = sp.divide(spm, 2,RoundingMode.HALF_EVEN );
+        mrp = mrp.subtract(BigDecimal.ONE).abs(MathContext.DECIMAL32);
+        mrp = mrp.divide(mrp.add(new BigDecimal("25")),3,RoundingMode.HALF_EVEN);
+        return mrp.doubleValue()*b;
+    }
 }

@@ -18,11 +18,11 @@ public class Stock_Menu {
 
         embed.setTitle(id+"의 주식정보");
         embed.setColor(Support.getRandomColor());
-        embed.addField("현재 가격",stock_data.getPrice().toString(),true);
-        embed.addField("이전 가격",stock_data.getLast_Price().toString(),true);
-        String num = stock_data.getALl_Num().subtract(stock_data.getSelling_Num())+"/"+stock_data.getALl_Num();
+        embed.addField("현재 가격",Support.unit(stock_data.getPrice())+" 베리",true);
+        embed.addField("이전 가격",Support.unit(stock_data.getLast_Price())+" 베리",true);
+        String num = Support.unit(stock_data.getALl_Num().subtract(stock_data.getSelling_Num()))+"/"+Support.unit(stock_data.getALl_Num());
         embed.addField("개수",num,true);
-        embed.addField("시총",stock_data.getALl_Num().multiply(stock_data.getALl_Num()).toString(),true);
+        embed.addField("시총",Support.unit(stock_data.getAll_Price())+" 베리",true);
         embed.setFooter(stock_data.getTime()+"분/ "+stock_data.getAll_Time()+"분");
         event.replyEmbeds(embed.build()).setEphemeral(true).queue();
 
