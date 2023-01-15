@@ -271,7 +271,7 @@ public class Stock {
                     }
                 }
             }
-        },2*second,2*second);
+        },min,min);
 
     }
 

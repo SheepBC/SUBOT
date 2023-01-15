@@ -1,6 +1,11 @@
 #UserDB/336828850358976512/Properties.txt
-#Mon Jan 02 21:24:38 KST 2023
-Money=5375664937113873
+#Sun Jan 15 19:04:56 KST 2023
+Money=5057925922388151
+TopProperty=5334491410208576
+TopSP=166491775238
 Debt=0
+Debt_Rate=Debt_Flow
 Tax=0
-Exp=27084
+Auto_Tax=false
+Economy_Alarm=false
+Exp=240803

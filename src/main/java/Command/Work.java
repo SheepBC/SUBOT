@@ -86,7 +86,7 @@ public class Work {
     public String mine(){
         UserDB userDB = new UserDB(userid);
         int addHealth = (int) (Math.random()*40+1)*-1;
-        int addExp = (int) (Math.random()*25)*+5;
+        int addExp = (int) (Math.random()*20)*+5;
         double r = SaveNLoad.getRandom(path+"mine.txt");
 
         String type = "";
@@ -192,8 +192,8 @@ public class Work {
 
     public String Hard_Work(){
         UserDB userDB = new UserDB(userid);
-        int addHealth = (int) ((Math.random()*350)+200)*-1;
-        int addExp = (int) (Math.random()*25)*+5;
+        int addHealth = (int) ((Math.random()*165)+150)*-1;
+        int addExp = (int) (Math.random()*10)*+5;
         String type = "고강도일";
         double p = Math.random()*1.125+1;
         int r = (int) (Math.random() * 10);

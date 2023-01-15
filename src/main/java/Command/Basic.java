@@ -55,7 +55,8 @@ public class Basic
         embed.addField("**가진 돈**", Support.unit(SugoData.getMoney()) +"베리",true);
         embed.addField("**가진 돈(SP)**", Support.unit(sp) +"베리",true);
         embed.addField("**SP(기준 물가)**", Support.unit(SugoData.getSP()) +"베리",true);
-        embed.addField("**MRP**", String.valueOf(SugoData.addMRP()),true);
+        embed.addField("**어제 SP(기준 물가)**", Support.unit(SugoData.getLast_SP()) +"베리",true);
+        embed.addField("**MRP**", String.valueOf(SugoData.getMRP()),true);
         embed.addField("**버전**",String.valueOf(SugoData.getVersion),true);
         embed.addField("**기본 세율**",SugoData.getTax()+"%",true);
         embed.addField("**접속한 서버**",jda.getGuilds().size()+"개",true);

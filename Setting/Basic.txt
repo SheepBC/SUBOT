@@ -1,3 +1,3 @@
 #Setting/Basic.txt
 #Sun Jul 10 16:25:06 KST 2022
-BotToken=ODk0MTc0Mzc0MTg0MjM5MTQ2.GYtlOu.odlkS0eIrWNhMIFL89Zskp5Sk_O3nJmADdPkDc
+BotToken=ODk0MTc0Mzc0MTg0MjM5MTQ2.GzooN0.WCaNZm9QfTBoE1Gn5e-_pwCI7WxtditmZLMCu4

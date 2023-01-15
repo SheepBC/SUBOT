@@ -5,20 +5,21 @@ import Supporter.SaveNLoad;
 import Supporter.Support;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.Modal;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Maneger {
 
@@ -157,8 +158,71 @@ public class Maneger {
         embed.setColor(Support.getRandomColor());
         embed.addField("사용한 유저수",main.users.size()+"명",true);
         embed.addField("사용한 횟수",main.use+"번",true);
-        embed.setFooter("평균 사용횟수 "+(double)(main.users.size()/main.use)+"번");
+        embed.setFooter("평균 사용횟수 "+(double)(main.use/main.users.size())+"번");
         channel.sendMessageEmbeds(embed.build()).queue();
     }
+
+    public void notice(){
+        Button button = Button.primary("notice","공지하기");
+        channel.sendMessage("공지하기").setActionRow(button).queue();
+    }
+
+    public static void notice_Button(ButtonInteractionEvent event){
+        TextInput text = TextInput.create("text","공지내용", TextInputStyle.PARAGRAPH)
+                .setPlaceholder("죄송합니다.....?")
+                .setMaxLength(1000)
+                .build();
+
+        Modal modal = Modal.create("notice","공지")
+                .addActionRow(text)
+                .build();
+        event.replyModal(modal).queue();
+    }
+
+    public static void notice_Modal(ModalInteractionEvent event){
+        String text = event.getValue("text").getAsString();
+
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setColor(new Color(4, 101, 4));
+        embed.addField("**공지**","```"+text+"```",true);
+        embed.setFooter("🍉SUBACKGOGI");
+
+        for(Guild server:event.getJDA().getGuilds()){
+            TextChannel channel = checkChannel(new ArrayList<>(server.getTextChannels()));
+            if(channel == null){
+                send_notice(server.getTextChannels(),embed);
+            }
+            else {
+                try {
+                    channel.sendMessageEmbeds(embed.build()).queue();
+                }catch (Exception e){
+                    send_notice(server.getTextChannels(),embed);
+                }
+            }
+        }
+        event.reply("공지 전송이 완료 되었습니다.").queue();
+    }
+    private static void send_notice(List<TextChannel> list, EmbedBuilder embed){
+        for(TextChannel channel1:list){
+            try {
+                channel1.sendMessageEmbeds(embed.build()).queue();
+                break;
+            }catch (Exception e){
+
+            }
+        }
+    }
+
+    private static TextChannel checkChannel(ArrayList<TextChannel> list){
+        for (TextChannel channel:list){
+            String topic = channel.getTopic();
+            if(topic == null) topic="null";
+            if(topic.contains("-숩봇")){
+                return channel;
+            }
+        }
+        return null;
+    }
+
 
 }

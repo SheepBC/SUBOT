@@ -2,18 +2,14 @@ package Supporter;
 
 import Chart.Chart;
 
-import java.awt.*;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import Chart.Chart;
+
 import Main.main;
 import SugoData.SugoData;
-
-import javax.naming.spi.DirectoryManager;
 
 import static Supporter.Stock_Data.Key.*;
 
@@ -244,7 +240,7 @@ public class Stock_Data {
 
     private void update_Price_A() {
         int aP = (int) SaveNLoad.getRandom("Stock/Common_Update.txt");
-        double mrp = 2.5+SugoData.addMRP();
+        double mrp = 2.5+SugoData.getMRP();
         if((int) (Math.random()*mrp) == 0) aP *= -1;
         if(getUpdate_Type().equalsIgnoreCase("C") & Math.random()*10 <3) aP += 1500;
         addPrice(new BigInteger(String.valueOf(aP)));
@@ -256,21 +252,23 @@ public class Stock_Data {
     private void update_Price_C_P() {
         double aPP = SaveNLoad.getRandom(Update)/100;
         //System.out.println(id+" "+aPP);
-        double mrp = 2.011175+SugoData.addMRP();
+        double mrp = 2.011175+SugoData.getMRP();
         if((int) (Math.random()*mrp) == 0) aPP *= -1;
         if(Math.random()*100 < 0.5) aPP+= 1;
         if(Math.random()*100 < 0.1) aPP+= 2;
         if(Math.random()*100 < 0.3) aPP = Math.abs(aPP)*-1;
+        aPP += SugoData.getMRP()/2;
         BigDecimal nP = new BigDecimal(getPrice());
         nP = nP.multiply(BigDecimal.ONE.add(new BigDecimal(String.valueOf(aPP))));
         setPrice(nP.toBigInteger());
     }
 
     private void update_Price_P_P(){
-        double mrp = 5.19-SugoData.addMRP();
+        double mrp = 5.19-SugoData.getMRP();
         double d = Support.noise(getSeed(),getSmooth(),getNoise_X())/mrp;
         addNoise_X(1);
         double p = 1+d;
+        p += SugoData.getMRP()/2;
         BigDecimal nP = new BigDecimal(getPrice());
         nP = nP.multiply(new BigDecimal(String.valueOf(p)));
         setPrice(nP.toBigInteger());

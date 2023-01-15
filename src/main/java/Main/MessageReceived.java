@@ -25,7 +25,6 @@ public class MessageReceived implements Runnable {
 
     @Override
     public void run() {
-
         if(main.isBackup) return;
 
         onMessageEvent();
@@ -39,9 +38,7 @@ public class MessageReceived implements Runnable {
         User_Health();
         Stock();
         Reply();
-        //Enhance();
-
-        Test();
+        //Test();
 
    }
 
@@ -62,6 +59,9 @@ public class MessageReceived implements Runnable {
        if(CommandCheck("사용횟수")){
            maneger.use_num();
        }
+       if(CommandCheck("공지")){
+           maneger.notice();
+       }
    }
 
     void onMessageEvent(){
@@ -71,6 +71,7 @@ public class MessageReceived implements Runnable {
         if(UserDB.isUser(event.getAuthor().getId())){
             UserDB userDB = new UserDB(event.getAuthor());
             userDB.TopUpdate();
+            userDB.TopSPUpdate();
             userDB.overwork(event.getJDA());
         }
     }
@@ -176,10 +177,11 @@ public class MessageReceived implements Runnable {
         if(CommandCheck("스탯")){
             user.inform_Stat();
         }
-         */
         if(CommandCheck("아이템")){
             user.inform_Item();
         }
+
+         */
         if(CommandCheck("순위")){
             user.Rank();
         }
@@ -203,6 +205,12 @@ public class MessageReceived implements Runnable {
         }
         if(CommandCheck("파산")){
             user.bankruptcy();
+        }
+        if(CommandCheck("출석","출첵","ㅊㅊ")){
+            user.attend();
+        }
+        if(CommandCheck("도둑질")){
+            user.stealing();
         }
         Work work = new Work(event,args);
         if(CommandCheck("광질")){

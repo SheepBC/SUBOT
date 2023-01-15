@@ -18,6 +18,7 @@ import java.awt.*;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
@@ -96,7 +97,7 @@ public class User {
         //embed.addField("**학교**",userDB.getSchool().equals("지정 안됨") ? "지정 안됨":"지정 됨",false);
         BigInteger sp = userDB.getAll_Property().divide(SugoData.getSP());
         embed.addField("**재산**",
-                "총자산: "+Support.unit(userDB.getAll_Property())+"\n"+
+                "총자산: "+Support.unit(userDB.getAll_Property())+" ("+userDB.get_AP_Rank()+"위)"+"\n"+
                 "SP: "+Support.unit(sp)+"SP",false);
 
         String sleep = "\n잠: "+Support.time_Unit(userDB.getSleepTime())+"/"+Support.time_Unit(userDB.getAll_SleepTime());
@@ -174,11 +175,15 @@ public class User {
         embed.setTitle(user.getName()+"님의 재산");
         embed.addField("**재산**",
                 "돈: "+Support.unit(userDB.getMoney())
+                        + "\n주식: "+Support.unit(userDB.getStock_All_Money())
                         + "\n빚: "+Support.unit(userDB.getDebt())
                         + "\n경험치: "+Support.unit(userDB.getExp())
                         + "\n-----------------"
-                        + "\n총자산: "+Support.unit(userDB.getAll_Property())
-                        +"\nSP: "+Support.unit(sp)+"SP",false);
+                        + "\n총자산: "+Support.unit(userDB.getAll_Property())+" ("+userDB.get_AP_Rank()+"위)",false);
+        embed.addField("**기타**",
+                "SP: "+Support.unit(sp)+"SP"
+                +"\n최고 자산: "+Support.unit(userDB.getTopProperty())
+                +"\n최고 SP: "+Support.unit(userDB.getTopSP())+"SP",true);
 
         channel.sendMessageEmbeds(embed.build()).queue();
     }
@@ -433,7 +438,7 @@ public class User {
         embed.setColor(Support.getRandomColor());
         embed.setTitle(userDB.getName()+"님의 정보");
 
-        embed.addField("**총자산**",Support.unit(userDB.getAll_Property()),true);
+        embed.addField("**총자산**",Support.unit(userDB.getAll_Property())+" ("+userDB.get_AP_Rank()+"위)",true);
         embed.addField("**건강**",Support.unit(userDB.getHealth()),true);
 
         channel.sendMessageEmbeds(embed.build()).queue();
@@ -842,6 +847,121 @@ public class User {
         userDB.setExp(0);
         event.getMessage().reply("파산하였습니다.").queue();
 
+    }
+
+    public void attend(){
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        if(SugoData.getAttend(userid).equals(LocalDate.now().toString())){
+            channel.sendMessage("오늘 이미 출석하였습니다.").queue();
+            return;
+        }
+        UserDB userDB = new UserDB(user);
+        userDB.addAttend_Num(1);
+        SugoData.setAttend(userid);
+        BigInteger add = SugoData.getAttend_Price(userDB);
+        userDB.addMoney(add);
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(user.getName()+"님의 출석");
+        embed.setColor(Support.getRandomColor());
+        embed.addField("출석금","```"+Support.unit(add)+"```",true);
+        embed.setFooter("출석횟수: "+userDB.getAttend_Num()+"번");
+        channel.sendMessageEmbeds(embed.build()).queue();
+    }
+
+    public void stealing(){
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        UserDB userDB = new UserDB(user);
+        if(userDB.getExp().min(new BigInteger("50000")).equals(userDB.getExp())){
+            channel.sendMessage("최소 5만경험치를 가지고있었야합니다.").queue();
+            return;
+        }
+
+        BigDecimal x = new BigDecimal(userDB.getExp().divide(new BigInteger("10000")));
+        BigDecimal p = x.divide(x.add(new BigDecimal("700")),5, RoundingMode.HALF_EVEN);
+        double dp = Math.random()*p.doubleValue();
+
+        UserDB stolen = getStolen(userDB);
+        BigDecimal price = new BigDecimal(stolen.getMoney());
+        BigDecimal bp = new BigDecimal(String.valueOf(dp));
+        price = price.multiply(bp);
+
+        BigDecimal x2 = new BigDecimal(userDB.getExp().divide(new BigInteger("4500")));
+        BigDecimal p2 = x2.divide(x2.add(new BigDecimal("250")),5, RoundingMode.HALF_EVEN);
+        double dp2 = Math.random()*p2.doubleValue();
+        BigDecimal bp2 = new BigDecimal(String.valueOf(dp2));
+        bp2 = BigDecimal.ONE.subtract(bp2);
+
+        price = price.multiply(bp2);
+        if(price.max(new BigDecimal("100000000")).equals(price)){
+            double dp3 = Math.random()*0.5+0.5;
+            BigDecimal bp3 = new BigDecimal(String.valueOf(dp3));
+            bp3 = bp3.pow(3);
+            //System.out.println("-------------------------------");
+            //System.out.println("1 "+Support.unit(price.toBigInteger()));
+            price = price.multiply(bp3);
+            //System.out.println("2 "+Support.unit(price.toBigInteger()));
+        }
+
+        if(price.max(new BigDecimal("5000000000")).equals(price)){
+            double dp3 = Math.random()*0.9+0.1;
+            BigDecimal bp3 = new BigDecimal(String.valueOf(dp3));
+            bp3 = bp3.pow(7);
+            price = price.multiply(bp3);
+            //System.out.println("3 "+Support.unit(price.toBigInteger()));
+        }
+
+        int addExp = addExp(price.toBigInteger())*-1;
+        userDB.addExp(addExp);
+        userDB.addMoney(price.toBigInteger());
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(user.getName()+"님의 도둑질");
+        embed.setColor(Support.getRandomColor());
+        embed.addField("훔친돈","```"+Support.unit(price.toBigInteger())+"```",true);
+        embed.setFooter(addExp+"Exp");
+        channel.sendMessageEmbeds(embed.build()).queue();
+
+    }
+
+    private UserDB getStolen(UserDB userDB){
+        String[] ids = UserDB.getUserList();
+        int num = (int) (Math.random()*(ids.length-1));
+        UserDB stolen = new UserDB(ids[num]);
+        if(userDB.userid.equals(stolen.userid)){
+            System.out.println("1");
+            return getStolen(userDB);
+        }
+        return stolen;
+    }
+
+    private int addExp(BigInteger price){
+        BigInteger sp = price.divide(SugoData.getSP());
+        if (sp.equals(BigInteger.ZERO)){
+            return (int) (Math.random()*150);
+        }
+        else if(sp.min(BigInteger.valueOf(2500)).equals(sp)){
+            return (int) (Math.random()*550+200);
+        }
+        else if(sp.min(BigInteger.valueOf(15000)).equals(sp)){
+            return (int) (Math.random()*4750+250);
+        }
+        else if(sp.min(BigInteger.valueOf(160000)).equals(sp)){
+            return (int) (Math.random()*10000+5000);
+        }
+        else if(sp.min(BigInteger.valueOf(330000)).equals(sp)){
+            return (int) (Math.random()*10000+10000);
+        }
+        else if(sp.min(BigInteger.valueOf(3330000)).equals(sp)){
+            return (int) (Math.random()*20000+20000);
+        }
+        else {
+            return (int) (Math.random()*20000+40000);
+        }
     }
 
 

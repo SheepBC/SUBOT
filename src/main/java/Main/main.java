@@ -34,7 +34,7 @@ public class main extends ListenerAdapter {
 
     public static boolean isBackup = false;
 
-    static JDA jda;
+    public static JDA jda;
 
     public static ArrayList<String> users = new ArrayList<>();
     public static long use = 0;
@@ -127,5 +127,6 @@ public class main extends ListenerAdapter {
         System.setErr(ps);
 
     }
+
 
 }

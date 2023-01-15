@@ -125,6 +125,7 @@ public class Stock_User {
         userDB.addStock_Num(id,(int)(num));
         Stock_Data stock_data = new Stock_Data(id);
         BigInteger addMoney = stock_data.getPrice().multiply(new BigInteger(String.valueOf((int)(num*-1))));
+        System.out.println(addMoney);
         userDB.addMoney(addMoney);
         stock_data.addSelling_Num(new BigInteger(String.valueOf((int)(num))));
         stock_data.addWeek_Selling_Price(new BigInteger(String.valueOf((int)(num))));

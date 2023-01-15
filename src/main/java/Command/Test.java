@@ -1,6 +1,7 @@
 package Command;
 
 
+import SugoData.SugoData;
 import Supporter.Support;
 import Supporter.UserDB;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -11,7 +12,9 @@ import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 
 public class Test {
@@ -29,12 +32,10 @@ public class Test {
     }
 
     public Test(){
-
     }
 
     public void test1(){
-
-
+        SugoData.charge_Tax();
     }
 
     public void buttonTest(ButtonInteractionEvent event){

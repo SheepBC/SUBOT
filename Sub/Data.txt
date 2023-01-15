@@ -1,5 +1,7 @@
 #Sub/Data.txt
-#Mon Feb 21 12:53:01 KST 2022
-money=10
+#Sun Jan 15 19:30:32 KST 2023
+money=31497335320422868
+last_SP=303274
+tax=0.1367
 version=1.5
-tax=0.5
+now_SP=301768

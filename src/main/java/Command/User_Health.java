@@ -144,11 +144,18 @@ public class User_Health {
             channel.sendMessage("숩잠 [잘 시간(예: 1주 1일 1시간 1분,최소 단위 **분**)]").queue();
             return;
         }
-
         long m = Support.Time_Unit_To_Second(arg[1]).longValue();
+        if(m <= 0){
+            if(Support.isLong(arg[1])){
+                m = Long.parseLong(arg[1]);
+            }else {
+                channel.sendMessage("숩잠 [잘 시간(예: 1주 1일 1시간 1분,최소 단위 **분**)]").queue();
+                return;
+            }
+        }
         userDB.setAll_SleepTime(m);
         Start_Sleep(event.getJDA(), userid);
-        channel.sendMessage(arg[1]+" 만큼 잠을 자기 시작 합니다.").queue();
+        channel.sendMessage(Support.time_Unit(m)+" 만큼 잠을 자기 시작 합니다.").queue();
     }
 
     public void stop_Sleep(){
@@ -203,7 +210,7 @@ public class User_Health {
         if(time <= 580){
             double x = Math.abs(time-360);
             double f = Math.ceil(Math.sqrt(x)/5);
-            long p = (long) (5-f);
+            long p = (long) (6.5-f);
 
             userDB.addHealth(p);
         }
@@ -212,7 +219,7 @@ public class User_Health {
             BigDecimal rT = new BigDecimal(String.valueOf(time));
             BigDecimal q = r750.divide(rT,7,RoundingMode.HALF_EVEN).sqrt(MathContext.DECIMAL32);
             long st = (long) (Math.ceil(q.doubleValue()+0.00001));
-            userDB.addHealth(st);
+            userDB.addHealth(st+1);
         }
     }
 

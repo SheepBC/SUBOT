@@ -27,6 +27,7 @@ public class SelectButton implements Runnable{
 
     @Override
     public void run() {
+        maneger();
         if(id.startsWith("Rank")){
             recommend rc = new recommend(event,user,buttons);
             rc.rank();
@@ -37,14 +38,20 @@ public class SelectButton implements Runnable{
         if(id.equalsIgnoreCase("Inquiry")){
             Basic.Button_Inquiry(event);
         }
-        if(id.equalsIgnoreCase("Inquiry_Reply")){
-            Maneger.Button_Inquiry_Reply(event);
-        }
         if(id.startsWith("UserBankruptcy")){
             Command.User.Button_bankruptcy(event);
         }
 
+    }
 
+    void maneger(){
+        if(!event.getUser().getId().equalsIgnoreCase("336828850358976512")) return;
+        if(id.equalsIgnoreCase("Inquiry_Reply")){
+            Maneger.Button_Inquiry_Reply(event);
+        }
+        if(id.equalsIgnoreCase("notice")){
+            Maneger.notice_Button(event);
+        }
     }
 
 }

@@ -1,12 +1,12 @@
 #UserDB/336828850358976512/HealthNOthers.txt
-#Mon Jan 02 21:24:38 KST 2023
+#Sun Jan 15 19:04:56 KST 2023
 School=null
 Dead_Num=0
-Health=658449
-Check_NUm=0
+Health=-157
+Check_NUm=1
 isHealth=false
 isStopHealth=false
 Failure_NUm=0
 SleepTime=0/0
-Tired=57
+Tired=12
 Name=양불리

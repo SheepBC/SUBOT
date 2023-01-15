@@ -11,9 +11,9 @@ import java.math.BigInteger;
 public class main {
 
     public static void main(String[] args) {
-        //make_User();
-        //set_User();
-        stock();
+        make_User();
+        set_User();
+        //stock();
     }
 
     static public void make_User(){

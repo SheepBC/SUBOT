@@ -32,16 +32,17 @@ public class Ready implements Runnable{
         Stock();
         BackUp();
         ChangeActivity();
-        SuGo_Charts();
+        SuGo();
         log();
     }
 
     public void User_System(){
-        System.out.println("유저시스템 작동시작");
         for(String id: UserDB.getUserList()){
             Health(id);
             User_Chart_and_Top_and_Debt(id);
         }
+        UserDB.Tax_Update();
+        System.out.println("유저시스템 작동시작");
     }
 
     public void Health(String id){
@@ -61,8 +62,9 @@ public class Ready implements Runnable{
     }
 
     public void Stock(){
-        System.out.println("주식시스템 작동시작");
         Stock.Price_Update();
+        System.out.println("주식시스템 작동시작");
+
     }
 
     public void log(){
@@ -96,7 +98,6 @@ public class Ready implements Runnable{
     }
 
     public void BackUp(){
-        System.out.println("백업시스템 작동시작");
         Timer timer = new Timer();
         Date date = new Date();
         date.setHours(1);
@@ -123,11 +124,13 @@ public class Ready implements Runnable{
                 jda.getPresence().setActivity(Activity.playing("\"숩명령어\"를 쳐보라고 말하는중 "));
             }
         },date,8*hour);
+        System.out.println("백업시스템 작동시작");
     }
 
-    public void SuGo_Charts(){
+    public void SuGo(){
+        SugoData.updateLast_SP();
+        SugoData.Update_Chart_SP();
         System.out.println("숩봇차트시스템 작동시작");
-        SugoData.UpdateChart();
     }
 
     public void ChangeActivity(){

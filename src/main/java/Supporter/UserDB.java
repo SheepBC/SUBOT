@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
 
 import static Supporter.UserDB.Name.*;
@@ -44,6 +45,7 @@ public class UserDB {
         static String Tired = "Tired";
 
         static String TopProperty ="TopProperty";
+        static String TopSP ="TopSP";
         static String Economy_Alarm = "Economy_Alarm";
         static String Money = "Money";
         static String Tax = "Tax";
@@ -63,7 +65,7 @@ public class UserDB {
         static String Chart_SP = "Chart_SP";
 
     }
-    String userid;
+    public String userid;
     String name;
     public UserDB(User user){
         userid = user.getId();
@@ -112,7 +114,7 @@ public class UserDB {
         setSchool("null");
         setDead_Num(0);
         setFailure_Num(0);
-        setCheck_Num(0);
+        setAttend_Num(0);
 
         //건강
         setIsHealth(false);
@@ -153,6 +155,7 @@ public class UserDB {
     public BigInteger getAll_Property(){
         BigInteger ap = getMoney().add(getExp().divide(new BigInteger(String.valueOf(getAM_Exp_Change())))).subtract(getTax().add(getDebt()));
         BigInteger stock = getStock_All_Money();
+        //System.out.println(getName()+" "+stock);
         return ap.add(stock);
     }
 
@@ -224,17 +227,17 @@ public class UserDB {
         SaveNLoad.addP(HNO,Failure_Num,String.valueOf(ii));
     }
 
-    public int getCheck_Num(){
+    public int getAttend_Num(){
         return Integer.parseInt(SaveNLoad.loadP(HNO,Check_Num));
     }
 
-    public void setCheck_Num(int i){
+    public void setAttend_Num(int i){
         SaveNLoad.addP(HNO,Check_Num,String.valueOf(i));
     }
 
-    public void addCheck_Num(int i){
-        int ii = getCheck_Num()+i;
-        setCheck_Num(ii);
+    public void addAttend_Num(int i){
+        int ii = getAttend_Num()+i;
+        setAttend_Num(ii);
     }
 
     public boolean isHealth(){
@@ -350,6 +353,18 @@ public class UserDB {
         addTopProperty(new BigInteger(String.valueOf(l)));
     }
 
+    public BigInteger getTopSP(){
+        String s = SaveNLoad.loadP(Property,TopSP);
+        if(s == null){
+            return BigInteger.ZERO;
+        }
+        return new BigInteger(s);
+    }
+
+    public void setTopSP(BigInteger bInt){
+        SaveNLoad.addP(Property,TopSP,bInt.toString());
+    }
+
     public boolean getEconomy_Alarm(){
         return Boolean.parseBoolean(SaveNLoad.loadP(Property,Economy_Alarm));
     }
@@ -447,7 +462,12 @@ public class UserDB {
     }
 
     public BigInteger getDebt(){
-        return new BigInteger(SaveNLoad.loadP(Property,Debt));
+        try {
+            return new BigInteger(SaveNLoad.loadP(Property,Debt));
+        }catch (Exception e){
+            return getDebt();
+        }
+
     }
 
     public void setDebt(BigInteger bInt){
@@ -692,6 +712,7 @@ public class UserDB {
             public void run() {
                 //System.out.println(userid);
                 TopUpdate();
+                TopSPUpdate();
                 chart_H.add(String.valueOf(getHealth()));
                 chart_P.add(getAll_Property().toString());
                 chart_SP.add(getAll_Property().divide(SugoData.getSP()).toString());
@@ -708,7 +729,7 @@ public class UserDB {
         long hour = 60*min;
 
         Date date = new Date();
-        date.setHours(1);
+        date.setHours(10);
         Timer timer = new Timer();
 
         timer.schedule(new TimerTask() {
@@ -722,9 +743,38 @@ public class UserDB {
         },date,24*hour);
     }
 
+    public static void Tax_Update(){
+
+        int second = 1000;
+        int min = 60*second;
+        long hour = 60*min;
+
+        Date date = new Date();
+        date.setHours(10);
+        Timer timer = new Timer();
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                int now = LocalDate.now().getDayOfMonth();
+                if(now == 1|| now == 14){
+                    SugoData.charge_Tax();
+                }
+            }
+        },date,24*hour);
+    }
+
     public void TopUpdate(){
         if(getAll_Property().max(getTopProperty()).equals(getAll_Property())){
             setTopProperty(getAll_Property());
+        }
+    }
+
+    public void TopSPUpdate(){
+        BigInteger sp = getAll_Property().divide(SugoData.getSP());
+        //System.out.println(sp+" "+getTopSP()+" "+sp.max(getTopSP()).equals(sp));
+        if(sp.max(getTopSP()).equals(sp)){
+            setTopSP(sp);
         }
     }
 
@@ -744,6 +794,16 @@ public class UserDB {
             jda.retrieveUserById(userid).flatMap(User::openPrivateChannel).queue(privateChannel ->
                     privateChannel.sendMessage("과로사 하였습니다.").queue());
         }
+    }
+
+    public int get_AP_Rank(){
+        ArrayList<BigInteger> list = new ArrayList<>();
+        for(String id:UserDB.getUserList()){
+            UserDB userDB = new UserDB(id);
+            list.add(userDB.getAll_Property());
+        }
+        Collections.sort(list);
+        return getUserList().length-(list.indexOf(getAll_Property()));
     }
 
 

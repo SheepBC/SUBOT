@@ -22,5 +22,8 @@ public class Modal_Event implements Runnable{
         if(Modal_Id.startsWith("Inquiry_Reply")){
             Maneger.Modal_Inquiry_Reply(event);
         }
+        if(Modal_Id.equalsIgnoreCase("notice")){
+            Maneger.notice_Modal(event);
+        }
     }
 }
