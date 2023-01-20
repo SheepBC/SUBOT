@@ -1,10 +1,10 @@
 #Userdb/850930479875489812.txt
-#Sat Dec 31 20:49:16 KST 2022
-prd=30.0
+#Fri Jan 20 18:34:06 KST 2023
+prd=49.0
 money=4.770404329E9
 heb=f
 name=규화된 참나무 반블럭
-health=710276.0
+health=767311.0
 slat=4.99999995E7
-slt=137104.0
-exp=6920.0
+slt=251174.0
+exp=6983.0

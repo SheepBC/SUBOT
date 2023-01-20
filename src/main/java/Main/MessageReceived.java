@@ -38,7 +38,7 @@ public class MessageReceived implements Runnable {
         User_Health();
         Stock();
         Reply();
-        //Test();
+        Test();
 
    }
 

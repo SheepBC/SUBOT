@@ -30,6 +30,27 @@ public class SelectMenu implements Runnable {
             if(option.equalsIgnoreCase("Basic")){
                 help.Basic();
             }
+            if(option.equalsIgnoreCase("Recommend")){
+                help.Recommend();
+            }
+            if(option.equalsIgnoreCase("Number")){
+                help.Number();
+            }
+            if(option.equalsIgnoreCase("User")){
+                help.User();
+            }
+            if(option.equalsIgnoreCase("Work_Garmb")){
+                help.Work_Garmb();
+            }
+            if(option.equalsIgnoreCase("Health")){
+                help.Health();
+            }
+            if(option.equalsIgnoreCase("Stock")){
+                help.Stock();
+            }
+            if(option.equalsIgnoreCase("Manager")){
+                help.Manager();
+            }
         }
         if(id.equalsIgnoreCase("USerRank")){
             User_Menu user_menu = new User_Menu(event);

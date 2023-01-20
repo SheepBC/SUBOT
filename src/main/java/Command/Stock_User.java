@@ -92,7 +92,7 @@ public class Stock_User {
 
     public void Stock_Buy_All(){
 
-        String command = "ㅅ매수 [id]";
+        String command = "ㅅ풀매수 [id]";
 
         if(!UserDB.isUser(userid)){
             channel.sendMessage(notUser).queue();

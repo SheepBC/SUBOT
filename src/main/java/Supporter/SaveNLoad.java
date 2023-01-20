@@ -1,5 +1,7 @@
 package Supporter;
 
+import Main.Setting;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -131,7 +133,7 @@ public class SaveNLoad {
     }
 
     static public void zip(String zipFile,String dir){
-        ProcessBuilder builder = new ProcessBuilder("Go/zip.exe",zipFile,dir);
+        ProcessBuilder builder = new ProcessBuilder("Go/zip"+ Setting.getGoExe(),zipFile,dir);
         Process process;
         try {
             process = builder.start();

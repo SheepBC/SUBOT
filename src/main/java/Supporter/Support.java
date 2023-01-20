@@ -1,5 +1,6 @@
 package Supporter;
 
+import Main.Setting;
 import SheepBC.BaseN;
 
 import java.awt.*;
@@ -341,7 +342,8 @@ public class Support {
         String se = String.valueOf(seed);
         String sm = String.valueOf(smooth);
         String sx = String.valueOf(x);
-        ProcessBuilder processBuilder = new ProcessBuilder("Go/noise.exe",se,sm,sx);
+        String command = "Go/noise"+ Setting.getGoExe();
+        ProcessBuilder processBuilder = new ProcessBuilder(command,se,sm,sx);
         Process process;
         try {
             process = processBuilder.start();

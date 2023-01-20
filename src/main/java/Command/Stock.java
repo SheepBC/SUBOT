@@ -66,7 +66,7 @@ public class Stock {
 
     public void Chart(){
 
-        String command = "ㅅ그래프 (주식아이디 or 오늘/일주일/한달/일년) (오늘/일주일/한달/일년 or 시작날짜(예: 2022/12/30)) (끝날짜(예: 2022/12/30))";
+        String command = "숩그래프 (주식아이디 or 오늘/일주일/한달/일년) (오늘/일주일/한달/일년 or 시작날짜(예: 2022/12/30)) (끝날짜(예: 2022/12/30))";
 
         ArrayList<String> days = new ArrayList<>();
         days.add("오늘");days.add("일주일");days.add("한달");days.add("일년");

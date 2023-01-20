@@ -1,10 +1,10 @@
 #Userdb/839765519149301761.txt
-#Sat Dec 31 17:30:07 KST 2022
+#Fri Jan 20 18:34:06 KST 2023
 prd=74.0
 money=1.229236528E9
 heb=f
-name=시우
-slat=0.0
-health=308398.0
-slt=0.0
-exp=50684.0
+name=김레이
+slat=50000.0
+health=328655.0
+slt=27202.5
+exp=55481.0

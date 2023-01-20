@@ -19,7 +19,20 @@ public class Setting {
     }
 
     public static String getCommandInform(String command){
+        String s = SaveNLoad.loadP("Setting/Commands/Inform.txt",command);
+        if(s == null) return "";
         return SaveNLoad.loadP("Setting/Commands/Inform.txt",command);
     }
+
+    public static String getGoExe(){
+        return SaveNLoad.loadP("Setting/Basic.txt","GOEXE");
+    }
+    public static String getlog(){
+        return SaveNLoad.loadP("Setting/Basic.txt","log");
+    }
+    public static String getInquiry(){
+        return SaveNLoad.loadP("Setting/Basic.txt","Inquiry");
+    }
+
 
 }

@@ -163,7 +163,9 @@ public class UserDB {
         BigInteger stock = BigInteger.ZERO;
         for(String id:Stock_Data.list()){
             Stock_Data stock_data = new Stock_Data(id);
-            stock = stock.add(stock_data.getPrice().multiply(new BigInteger(String.valueOf(getStock_Num(id)).replace(".0",""))));
+            //System.out.println(getStock_Num(id)+userid);
+            BigDecimal bd = new BigDecimal(String.valueOf(getStock_Num(id)));
+            stock = stock.add(stock_data.getPrice().multiply(bd.toBigInteger()));
         }
         return stock;
     }
@@ -677,7 +679,6 @@ public class UserDB {
     private String[] getStock(String id){
          String inform = SaveNLoad.loadP(Stock,id);
         if(inform == null) SaveNLoad.addP(Stock,id,"0.0/0");
-         String[] list = SaveNLoad.loadP(Stock,id).split("/");
          return SaveNLoad.loadP(Stock,id).split("/");
     }
 
@@ -757,7 +758,7 @@ public class UserDB {
             @Override
             public void run() {
                 int now = LocalDate.now().getDayOfMonth();
-                if(now == 1|| now == 14){
+                if(now == 1|| now == 15){
                     SugoData.charge_Tax();
                 }
             }
@@ -779,7 +780,7 @@ public class UserDB {
     }
 
     public void overwork(JDA jda){
-        if(getHealth() < -2000){
+        if(getHealth() < -2500){
             if(getAll_Property().min(BigInteger.ZERO).equals(BigInteger.ZERO)){
                 SugoData.addMoney(getAll_Property());
             }

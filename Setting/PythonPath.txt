@@ -1,3 +1,4 @@
 #Setting/PythonPath.txt
 #Sat Jun 11 16:19:26 KST 2022
 Number=Number.py
+Command=D:\\자바파일\\bot\\untitled\\untitled1\\venv\\Scripts\\python.exe

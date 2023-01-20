@@ -1,5 +1,7 @@
 package Chart;
 
+import Main.Setting;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -46,7 +48,7 @@ public class Make_Chart {
             list.add(make_CDS_File(cds_To_String(cds,days)));
         }
 
-        make_Chart("chart.exe",list);
+        make_Chart("chart"+ Setting.getGoExe(),list);
 
     }
 

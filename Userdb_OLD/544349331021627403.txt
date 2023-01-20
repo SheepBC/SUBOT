@@ -1,10 +1,10 @@
 #Userdb/544349331021627403.txt
-#Fri Dec 30 21:17:29 KST 2022
-prd=35.0
-money=1.1957799698979746E16
+#Fri Jan 20 18:34:06 KST 2023
+prd=98.0
+money=1.7054865478464746E16
 heb=f
 name=꼬마
-health=305376.0
-slat=0.0
-slt=0.0
-exp=42364.0
+health=320026.0
+slat=4.999999995E8
+slt=24394.0
+exp=43476.0

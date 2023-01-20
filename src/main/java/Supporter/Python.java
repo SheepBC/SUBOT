@@ -10,7 +10,8 @@ public class Python {
     public static List<String> getPython(String PytonPath, String...arg){
 
         try {
-            String command = "D:\\자바파일\\bot\\untitled\\untitled1\\venv\\Scripts\\python.exe";// 명령어
+            String command = SaveNLoad.loadP("Setting/PythonPath.txt","Command");// 명령어
+            //System.out.println(command);
 
             String[] commands = Support.addStrings(new  String[]{command,PytonPath},arg);
             ProcessBuilder builder = new ProcessBuilder(commands);

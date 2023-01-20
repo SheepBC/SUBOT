@@ -5,6 +5,8 @@ import Main.main;
 import Supporter.SaveNLoad;
 import Supporter.Support;
 import Supporter.UserDB;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.User;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -194,7 +196,7 @@ public class SugoData {
         String size = "8";
         if(bool){
             mrp = spm.divide(sp,2,RoundingMode.HALF_EVEN);
-            size = "2";
+            size = "7";
         }
         mrp = mrp.subtract(BigDecimal.ONE).abs(MathContext.DECIMAL32);
         mrp = mrp.divide(mrp.add(new BigDecimal(size)),3,RoundingMode.HALF_EVEN);
@@ -202,10 +204,10 @@ public class SugoData {
     }
 
     public static BigInteger getTax_Price(String userid){
-        String mo = "250000";
+        String mo = "200000";
         UserDB userDB = new UserDB(userid);
         BigDecimal price = new BigDecimal(userDB.getAll_Property());
-        price = price.divide(new BigDecimal("2000000000000"),10,RoundingMode.HALF_EVEN);
+        price = price.divide(new BigDecimal("1500000000000"),10,RoundingMode.HALF_EVEN);
         BigDecimal tax = new BigDecimal(String.valueOf(getTax()));
         BigDecimal max = new BigDecimal("25.5");
         BigDecimal re = max.subtract(tax)
@@ -219,15 +221,26 @@ public class SugoData {
     }
 
     public static void charge_Tax(){
-        System.out.println("----------------------------------------------");
+        //System.out.println("----------------------------------------------");
         for(String userid:UserDB.getUserList()){
             UserDB userDB = new UserDB(userid);
             BigDecimal tax = new BigDecimal(SugoData.getTax_Price(userid));
             BigDecimal price = new BigDecimal(userDB.getAll_Property());
             BigDecimal p = tax.divide(price,4, RoundingMode.HALF_EVEN).multiply(new BigDecimal("100"));
-            System.out.println(userDB.getName()+" "+Support.unit(tax)+" "+p+"%");
+            //System.out.println(userDB.getName()+" "+Support.unit(tax)+" "+p+"%");
             userDB.addMoney(tax.toBigInteger().multiply(new BigInteger("-1")));
             addMoney(tax.toBigInteger());
+            EmbedBuilder embed = new EmbedBuilder();
+            //embed.setTitle("세금");
+            embed.setColor(Support.getRandomColor());
+            embed.addField("세금",Support.unit(tax)+"베리("+p.setScale(2)+"%)",true);
+            //System.out.println(p+" "+p.setScale(2));
+            try {
+                main.jda.retrieveUserById(userid).flatMap(User::openPrivateChannel)
+                        .queue(privateChannel -> privateChannel.sendMessageEmbeds(embed.build()).queue());
+            }catch (Exception e){
+
+            }
         }
         double size = -13.23;
         if(getMRP()<0) size = -2.3;
@@ -237,14 +250,37 @@ public class SugoData {
 
     public static BigInteger getAttend_Price(UserDB userDB){
         BigDecimal m = getAttend_Num(userDB);
-        int d = 32*UserDB.getUserList().length;
+        int d = 300*UserDB.getUserList().length;
         BigDecimal price = new BigDecimal(getMoney()).divide(new BigDecimal(String.valueOf(d)),10,RoundingMode.HALF_EVEN);
         //System.out.println(Support.unit(price));
         price = price.multiply(m);
         //System.out.println(Support.unit(price));
-        BigDecimal max = new BigDecimal(userDB.getTopSP()).multiply(new BigDecimal(getSP())).multiply(new BigDecimal("1.3"));
+        String s = "0.8";
+        if(getUp(userDB)) s = "1.5";
+        BigDecimal max = new BigDecimal(userDB.getTopSP()).multiply(new BigDecimal(getSP())).multiply(new BigDecimal(s));
+        if(max.min(price).equals(max)) return max.toBigInteger();
+        if(getUp(userDB)) price = price.multiply(new BigDecimal("5"));
+        return price.toBigInteger();
+    }
+
+    public static BigInteger getAttend_Price_UP(UserDB userDB){
+        BigDecimal m = getAttend_Num(userDB);
+        int d = 300*UserDB.getUserList().length;
+        BigDecimal price = new BigDecimal(getMoney()).divide(new BigDecimal(String.valueOf(d)),10,RoundingMode.HALF_EVEN);
+        //System.out.println(Support.unit(price));
+        price = price.multiply(m);
+        //System.out.println(Support.unit(price));
+        String s = "0.8";
+        BigDecimal max = new BigDecimal(userDB.getTopSP()).multiply(new BigDecimal(getSP())).multiply(new BigDecimal(s));
         if(max.min(price).equals(max)) return max.toBigInteger();
         return price.toBigInteger();
+    }
+
+    public static boolean getUp(UserDB userDB){
+        BigInteger i = SugoData.getTax_Price(userDB.userid);
+        BigInteger a = SugoData.getAttend_Price_UP(userDB);
+        BigInteger s = i.subtract(a.multiply(new BigInteger("15")));
+        return s.max(new BigInteger("250000000").multiply(getSP())).equals(s);
     }
 
     public static BigDecimal getAttend_Num(UserDB userDB){
