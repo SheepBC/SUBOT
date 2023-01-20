@@ -147,7 +147,7 @@ public class User_Health {
         long m = Support.Time_Unit_To_Second(arg[1]).longValue();
         if(m <= 0){
             if(Support.isLong(arg[1])){
-                m = Long.parseLong(arg[1]);
+                m = Long.parseLong(arg[1])*60;
             }else {
                 channel.sendMessage("숩잠 [잘 시간(예: 1주 1일 1시간 1분,최소 단위 **분**)]").queue();
                 return;

@@ -32,10 +32,19 @@ public class Test {
     }
 
     public Test(){
+
     }
 
     public void test1(){
         SugoData.charge_Tax();
+        double before = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        before = before/1024/1024;
+        System.gc();
+        double after = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        after = after/1024/1024;
+        System.out.println("-----------------");
+        System.out.println(before+" "+after);
+        System.out.println(after-before);
     }
 
     public void buttonTest(ButtonInteractionEvent event){

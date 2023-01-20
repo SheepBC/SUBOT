@@ -151,7 +151,7 @@ public class Garmbing {
 
     public void Slot_Machine(){
         JDA jda = event.getJDA();
-        String command = "숩주사위도박 [걸돈 or 올인]";
+        String command = "숩슬롯머신 [걸돈 or 올인]";
         if(!UserDB.isUser(userid)){
             channel.sendMessage(notUser).queue();
             return;

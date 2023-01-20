@@ -1,10 +1,10 @@
 #Userdb/336828850358976512.txt
-#Sat Dec 31 20:31:29 KST 2022
-prd=56.0
+#Fri Jan 20 18:34:06 KST 2023
+prd=77.0
 heb=f
-money=5.375648585237103E15
-name=양불리
-slat=0.0
-health=662379.0
-slt=0.0
-exp=1.634411385E9
+money=4.984072226989426E15
+name=Sheep_BC
+slat=500000.0
+health=676908.0
+slt=23963.5
+exp=1.63443731E9

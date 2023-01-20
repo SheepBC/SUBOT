@@ -1,5 +1,6 @@
 package Command;
 
+import Main.Setting;
 import SugoData.SugoData;
 import Supporter.Support;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -34,7 +35,13 @@ public class Basic
 
     public void Help() {
         SelectMenu.Builder menu = SelectMenu.create("Help")
-                .addOption("기본","Basic","기본적인 명령어", Emoji.fromUnicode("🍉"));
+                .addOption("기본","Basic","기본적인 명령어", Emoji.fromUnicode("🍉"))
+                .addOption("추천","Recommend","추천또는 골라주는 명령어", Emoji.fromUnicode("😄"))
+                .addOption("숫자","Number","숫자관련된 명령어", Emoji.fromUnicode("\uD83D\uDD22"))
+                .addOption("유저","User","회원가입후 사용할수있는 명령어", Emoji.fromUnicode("\uD83D\uDC64"))
+                .addOption("일과 도박","Work_Garmb","일과 도박 명령어", Emoji.fromUnicode("\uD83D\uDCB8"))
+                .addOption("건강","Health","건강에 대한 명령어", Emoji.fromUnicode("\uD83C\uDFE3"))
+                .addOption("주식","Stock","주식관련명령어", Emoji.fromUnicode("\uD83D\uDCC8"));
 
         if(userID.equalsIgnoreCase("336828850358976512"))
             menu.addOption("관리자","Manager","관리자 명령어",Emoji.fromUnicode("⚙"));
@@ -102,7 +109,7 @@ public class Basic
         embed.addField("문의내용","```"+event.getValue("text").getAsString()+"```",true);
         event.reply("문의가 완료되었습니다.").queue();
         Button button = Button.primary("Inquiry_Reply", "답장하러가기");
-        jda.getTextChannelById("1060886788153036870").sendMessageEmbeds(embed.build()).setActionRow(button).queue();
+        jda.getTextChannelById(Setting.getInquiry()).sendMessageEmbeds(embed.build()).setActionRow(button).queue();
         jda.retrieveUserById(event.getUser().getId()).flatMap(User::openPrivateChannel).queue(privateChannel -> privateChannel.sendMessageEmbeds(embed.build()).queue());
     }
 

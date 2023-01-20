@@ -87,13 +87,13 @@ public class Ready implements Runnable{
                     String time = LocalTime.now().getMinute()+":"+LocalTime.now().getSecond();
                     String send = "["+time+"] "+s;
                     System.out.println(s);
-                    jda.getTextChannelById("1061595294086729778").sendMessage(send).queue();
+                    jda.getTextChannelById(Setting.getlog()).sendMessage(send).queue();
                     main.change();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        },0,10);
+        },100,500);
 
     }
 
@@ -121,6 +121,7 @@ public class Ready implements Runnable{
                 SaveNLoad.zip("BackUP/"+dat+"_"+ts+"_Stock.zip","Stock");
                 SaveNLoad.zip("BackUP/"+dat+"_"+ts+"_Sub.zip","Sub");
                 main.isBackup = false;
+                System.gc();
                 jda.getPresence().setActivity(Activity.playing("\"숩명령어\"를 쳐보라고 말하는중 "));
             }
         },date,8*hour);

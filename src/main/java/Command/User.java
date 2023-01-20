@@ -287,7 +287,7 @@ public class User {
 
 
     public void User_Rank_System(String s) {
-        System.out.println(s);
+        //System.out.println(s);
         String path = "";
         String key = "";
         boolean isOne = true;
@@ -348,7 +348,7 @@ public class User {
                 case "자산":
                     for (String userid : UserDB.getUserList()) {
                         UserDB userDB = new UserDB(userid);
-                        BigInteger pro = userDB.getMoney().add(userDB.getExp()).subtract(userDB.getTax().add(userDB.getDebt()));
+                        BigInteger pro = userDB.getAll_Property();
                         list.add(new Rank(userid, pro));
                     }
                     break;
@@ -503,7 +503,7 @@ public class User {
                 case "자산":
                     for(String userid:UserDB.getUserList()){
                         UserDB userDB = new UserDB(userid);
-                        BigInteger pro = userDB.getMoney().add(userDB.getExp()).subtract(userDB.getTax().add(userDB.getDebt()));
+                        BigInteger pro = userDB.getAll_Property();
                         list.add(new Rank(userid,pro));
                     }
                     break;
@@ -882,6 +882,12 @@ public class User {
             return;
         }
 
+        if(Math.random()*4<1){
+            userDB.addExp(-1500);
+            channel.sendMessage("도둑질에 실패하였습니다.(-1500경험치)").queue();
+            return;
+        }
+
         BigDecimal x = new BigDecimal(userDB.getExp().divide(new BigInteger("10000")));
         BigDecimal p = x.divide(x.add(new BigDecimal("700")),5, RoundingMode.HALF_EVEN);
         double dp = Math.random()*p.doubleValue();
@@ -916,6 +922,7 @@ public class User {
             //System.out.println("3 "+Support.unit(price.toBigInteger()));
         }
 
+
         int addExp = addExp(price.toBigInteger())*-1;
         userDB.addExp(addExp);
         userDB.addMoney(price.toBigInteger());
@@ -933,7 +940,6 @@ public class User {
         int num = (int) (Math.random()*(ids.length-1));
         UserDB stolen = new UserDB(ids[num]);
         if(userDB.userid.equals(stolen.userid)){
-            System.out.println("1");
             return getStolen(userDB);
         }
         return stolen;
@@ -960,7 +966,7 @@ public class User {
             return (int) (Math.random()*20000+20000);
         }
         else {
-            return (int) (Math.random()*20000+40000);
+            return (int) (Math.random()*10000+40000);
         }
     }
 

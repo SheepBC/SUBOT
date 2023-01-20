@@ -1,5 +1,6 @@
 package Change_File;
 
+import Supporter.SaveNLoad;
 import Supporter.Stock_Data;
 import Supporter.UserDB;
 
@@ -13,7 +14,7 @@ public class main {
     public static void main(String[] args) {
         make_User();
         set_User();
-        //stock();
+        stock();
     }
 
     static public void make_User(){
@@ -34,26 +35,37 @@ public class main {
             userDB.setMoney(bdm.toBigInteger());
             userDB.setName(UDS.getName(id));
             userDB.addMoney(bde.toBigInteger());
-            System.out.println(id);
+            try {
+                set_Stock_user(id);
+                System.out.println(id);
+            }catch (Exception e){
+                System.out.println(id+" x");
+            }
         }
     }
 
-    static public void stock(){
-        /*
-        for(String id:UDS.getUserList()){
-            UserDB userDB = new UserDB(id);
-            try {
-                String path = "user/"+id;
-                String[] list = {"BC","JH","IH","HM"};
-                for (String Id:list){
-                    userDB.setStock(Id,getJSNum(path,Id),new BigInteger(String.valueOf(getJSAM(path,Id))));
-                }
-            }catch (Exception e){
-                System.out.println("dsad");
-            }
+    static public void set_Stock_user(String userid){
+        String[] list = {"BC","JH","IH","HM"};
+        UserDB userDB = new UserDB(userid);
+        for (String jid:list){
+            userDB.setStock(jid,getJSNum(jid,userid),getJSAM(jid,userid));
         }
+    }
 
-         */
+    public static double getJSNum(String jsId,String userid){
+        String path = "user/"+userid+".txt";
+        String[] ss = SaveNLoad.loadP(path,jsId).split("/");
+        return Double.parseDouble(ss[0]);
+
+    }
+
+    public static BigInteger getJSAM(String jsId,String userid){
+        String path = "user/"+userid+".txt";
+        String[] ss = SaveNLoad.loadP(path,jsId).split("/");
+        return new BigInteger(ss[1]);
+    }
+
+    static public void stock(){
         String[] list = {"BC","JH","IH","HM"};
         String[] bc = "(주)BellCircle,1500000,2180,20".split(",");
         String[] jh = "(주)중현공업,2000000,1000,10".split(",");
@@ -77,31 +89,30 @@ public class main {
             }
             Stock_Data stock_data = new Stock_Data(id);
             stock_data.setName(inform[0]);
-            stock_data.setStart_Num(new BigInteger(inform[1]));
+            stock_data.setStart_Num(new BigInteger(inform[1]).multiply(BigInteger.TEN));
             BigInteger sap = new BigInteger(inform[2]);
-            stock_data.setStart_All_Price(sap.multiply(stock_data.getStart_Num()));
+            stock_data.setStart_All_Price(sap.multiply(stock_data.getStart_Num()).multiply(BigInteger.TEN));
             System.out.println(id+" "+stock_data.getPrice()+" "+stock_data.getALl_Num());
             stock_data.setTimes(0,Integer.parseInt(inform[3]));
+            stock_data.setSelling_Num(sellingNum(id));
+            stock_data.setPrice(nowPrice(id));
+            stock_data.setLast_Price(nowPrice(id));
         }
 
     }
-
-    public static int getJSNum(String path,String jsId){
-        try {
-            String[] s = YDS.Loadp(path,jsId).split("/");
-            return Integer.parseInt(s[0]);
-        }catch (Exception e){
-            return 0;
-        }
+    static String path = "inform/";
+    public static BigInteger sellingNum(String id){
+        String s = path+id+".txt";
+        BigInteger an = new BigInteger(SaveNLoad.loadP(s,"StartNum"));
+        BigInteger nn = new BigInteger(SaveNLoad.loadP(s,"Num"));
+        return an.subtract(nn);
     }
 
-    public static long getJSAM(String path,String jsId){
-        try {
-            String[] s = YDS.Loadp(path,jsId).split("/");
-            return Long.parseLong(s[1]);
-        }catch (Exception e){
-            return 0;
-        }
+    public static BigInteger nowPrice(String id){
+        String s = path+id+".txt";
+        BigInteger an = new BigInteger(SaveNLoad.loadP(s,"Money"));;
+        return an;
     }
+
 
 }

@@ -28,7 +28,7 @@ public class Basic_Chart {
     }
 
     public void chart(){
-        String command = "숩유저그래프 (SP/건강/수박고기SP/수박고기자산) (오늘/일주일/한달/일년/전체)";
+        String command = "숩평균유저그래프 (SP/건강/수박고기SP/수박고기자산) (오늘/일주일/한달/일년/전체)";
         String days = "전체";
         String[] day_list = {"일주일","한달","일년","전체","오늘"};
         String type = "SP";

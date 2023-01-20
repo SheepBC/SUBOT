@@ -139,6 +139,7 @@ public class Work {
         userDB.addHealth(addHealth);
         userDB.addMoney(addPrice);
         userDB.addExp(addExp);
+        SugoData.addMoney(addPrice.multiply(new BigInteger("-1")));
 
         return type+" "+num+" "+addPrice+" "+addHealth+" "+addExp;
 
@@ -208,6 +209,7 @@ public class Work {
         userDB.addExp(addExp);
         userDB.addHealth(addHealth);
         userDB.addMoney(addPrice);
+        SugoData.addMoney(addPrice.multiply(new BigInteger("-1")));
 
         return addHealth+" "+addExp+" "+addPrice+" "+type;
     }
