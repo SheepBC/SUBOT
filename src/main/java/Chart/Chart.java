@@ -1,9 +1,12 @@
 package Chart;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,7 +131,6 @@ public class Chart {
             }
         }
 
-
         return chart_data_list;
 
     }
@@ -191,7 +193,6 @@ public class Chart {
         return chart_data_list;
     }
 
-    @SafeVarargs
     static public ArrayList<String> getDay_LIst(ArrayList<Chart_Data>... lists){
         ArrayList<String> day_list = new ArrayList<>();
         for(ArrayList<Chart_Data> cd_list:lists){
@@ -202,5 +203,23 @@ public class Chart {
         day_list.sort(String.CASE_INSENSITIVE_ORDER);
         day_list = (ArrayList<String>) day_list.stream().distinct().collect(Collectors.toList());
         return day_list;
+    }
+
+    public static ArrayList<Chart_Data> sort(ArrayList<Chart_Data> list){
+        Collections.sort(list, new Comparator<Chart_Data>() {
+            @Override
+            public int compare(Chart_Data o1, Chart_Data o2) {
+                BigDecimal b1 = new BigDecimal(o1.time.replace("/","").replace(":",""));
+                BigDecimal b2 = new BigDecimal(o2.time.replace("/","").replace(":",""));
+                if(b1.max(b2).equals(b1)){
+                    return 1;
+                }else if(b1.min(b2).equals(b1)){
+                    return -1;
+                }else {
+                    return 0;
+                }
+            }
+        });
+        return list;
     }
 }

@@ -196,13 +196,22 @@ public class Stock {
             cdss.add(cds);
             idss += id+"/";
             colors += stock_data.getColor()+"/";
-            check_times.add(cds.get(0).time.substring(0,10).replace("/","-"));
+            String st = "9999/99/99";
+            int sti = 999999999;
+            for(Chart_Data cd:cds){
+                String cdt = cd.time.substring(0,10);
+                int cdti = Integer.parseInt(cdt.replace("/",""));
+                if(cdti < sti){
+                    st = cdt;
+                    sti = cdti;
+                }
+            }
+            check_times.add(st.replace("/","-"));
         }
         idss = idss.substring(0,idss.length()-1);
         String path = "charts/"+idss.replace("/","-")+"_"+days+".png";
 
         String[] ctList = check_times.toArray(new String[0]);
-
         Arrays.sort(ctList);
         String check_time = ctList[0];
 
@@ -268,6 +277,7 @@ public class Stock {
                     if(stock_data.getAll_Time() <= stock_data.getTime()){
                         stock_data.update_Price();
                         stock_data.setTime(0);
+                        //System.out.println(stock_data.getName());
                     }
                 }
             }

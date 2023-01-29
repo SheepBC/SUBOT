@@ -707,7 +707,17 @@ public class User {
 
         Chart chart = new Chart("UserDB/"+userid+"/Charts/"+type_E);
         ArrayList<Chart_Data> cds = chart.getChart_Data_list(old,now);
-        check_times.add(cds.get(0).time.substring(0,10).replace("/","-"));
+        String st = "9999/99/99";
+        int sti = 999999999;
+        for(Chart_Data cd:cds){
+            String cdt = cd.time.substring(0,10);
+            int cdti = Integer.parseInt(cdt.replace("/",""));
+            if(cdti < sti){
+                st = cdt;
+                sti = cdti;
+            }
+        }
+        check_times.add(st.replace("/","-"));
         String path = "UserDB/"+userid+"/Charts/Images/"+id.replace("/","-")+"_"+days+".png";
 
         String[] ctList = check_times.toArray(new String[0]);
@@ -925,6 +935,7 @@ public class User {
 
         int addExp = addExp(price.toBigInteger())*-1;
         userDB.addExp(addExp);
+        stolen.addMoney(price.multiply(new BigDecimal("-1")).toBigInteger());
         userDB.addMoney(price.toBigInteger());
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(user.getName()+"님의 도둑질");

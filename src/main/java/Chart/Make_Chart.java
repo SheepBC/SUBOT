@@ -4,7 +4,7 @@ import Main.Setting;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 
 public class Make_Chart {
@@ -38,6 +38,7 @@ public class Make_Chart {
 
         ArrayList<String> list = new ArrayList<>();
         ArrayList<String> days = Chart.getDay_LIst(lists);
+        Collections.sort(days);
 
         list.add(path);
         list.add(inform);
@@ -45,6 +46,7 @@ public class Make_Chart {
         list.add(colors);
 
         for (ArrayList<Chart_Data> cds:lists){
+            cds = Chart.sort(cds);
             list.add(make_CDS_File(cds_To_String(cds,days)));
         }
 
@@ -111,19 +113,19 @@ public class Make_Chart {
         String s ="";
         int ii = 0;
         for(String day:days){
-            if(ii >= cds.size()) break;
+            if(ii >= cds.size()){
+                break;
+            }
             if(day.equalsIgnoreCase(cds.get(ii).time)){
                 s += days.indexOf(day)+":"+cds.get(ii).value.replace(" ","")+"/";
                 ii++;
             }
         }
-
         return s.substring(0,s.length()-1);
     }
 
     static private String make_CDS_File(String cds){
-        String path = "charts/"+random(6)+".txt";
-
+        String path = "charts/"+random(6);
         File file = new File(path);
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));

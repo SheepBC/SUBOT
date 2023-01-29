@@ -102,7 +102,17 @@ public class Basic_Chart {
 
         Chart chart = new Chart(SugoData.ChartPath+type_E);
         ArrayList<Chart_Data> cds = chart.getChart_Data_list(old,now);
-        check_times.add(cds.get(0).time.substring(0,10).replace("/","-"));
+        String st = "9999/99/99";
+        int sti = 999999999;
+        for(Chart_Data cd:cds){
+            String cdt = cd.time.substring(0,10);
+            int cdti = Integer.parseInt(cdt.replace("/",""));
+            if(cdti < sti){
+                st = cdt;
+                sti = cdti;
+            }
+        }
+        check_times.add(st.replace("/","-"));
         String path = "Sub/images/"+type_E+"_"+days+".png";
 
         String[] ctList = check_times.toArray(new String[0]);

@@ -368,7 +368,7 @@ public class Support {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        System.out.println(ns+" "+seed+" "+smooth+" "+x);
         return Double.parseDouble(ns);
     }
 

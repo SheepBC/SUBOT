@@ -1,5 +1,11 @@
 package Chart;
 
+import Supporter.Rank;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 public class Chart_Data {
 
     public String time;
@@ -15,5 +21,7 @@ public class Chart_Data {
         time = list[0].replace("[","");
         value = list[1];
     }
+
+
 
 }
