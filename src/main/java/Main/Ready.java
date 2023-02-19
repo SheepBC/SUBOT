@@ -33,7 +33,7 @@ public class Ready implements Runnable{
         BackUp();
         ChangeActivity();
         SuGo();
-        log();
+        //log();
     }
 
     public void User_System(){
@@ -93,7 +93,7 @@ public class Ready implements Runnable{
                     e.printStackTrace();
                 }
             }
-        },100,500);
+        },100,300);
 
     }
 
@@ -129,7 +129,6 @@ public class Ready implements Runnable{
     }
 
     public void SuGo(){
-        SugoData.updateLast_SP();
         SugoData.Update_Chart_SP();
         System.out.println("숩봇차트시스템 작동시작");
     }

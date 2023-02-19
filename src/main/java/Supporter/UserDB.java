@@ -1,6 +1,7 @@
 package Supporter;
 
 import Chart.Chart;
+import School.School_Data;
 import SugoData.SugoData;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 
 import static Supporter.UserDB.Name.*;
@@ -111,7 +113,6 @@ public class UserDB {
 
         //기타
         setName(name);
-        setSchool("null");
         setDead_Num(0);
         setFailure_Num(0);
         setAttend_Num(0);
@@ -126,7 +127,8 @@ public class UserDB {
         //자산
         setTopProperty(0);
         setEconomy_Alarm(false);
-        setMoney(100000);
+        setMoney(10000);
+        SugoData.addMoney(-10000);
         setTax(0);
         setAuto_TAx(false);
         setDebt(0);
@@ -194,13 +196,14 @@ public class UserDB {
         SaveNLoad.addP(HNO,Name,name);
     }
 
-    public String getSchool(){
+    public School_Data getSchool(){
         String s = SaveNLoad.loadP(HNO,School);
-        return s.equalsIgnoreCase("null") ? "지정 안됨":s;
+        if(s == null) return null;
+        return new School_Data((String) Support.toObject(s));
     }
 
-    public void setSchool(String school){
-        SaveNLoad.addP(HNO,School,school);
+    public void setSchool(School_Data school){
+        SaveNLoad.addP(HNO,School,Support.toSerialize(school.toString()));
     }
 
     public int getDead_Num(){
@@ -718,7 +721,7 @@ public class UserDB {
                 chart_P.add(getAll_Property().toString());
                 chart_SP.add(getAll_Property().divide(SugoData.getSP()).toString());
             }
-        },date,30*min);
+        },date,15*min);
 
 
     }
@@ -730,6 +733,7 @@ public class UserDB {
         long hour = 60*min;
 
         Date date = new Date();
+        if(LocalTime.now().isAfter(LocalTime.of(10,0))) date.setDate(date.getDate()+1);
         date.setHours(10);
         Timer timer = new Timer();
 
@@ -752,6 +756,8 @@ public class UserDB {
 
         Date date = new Date();
         date.setHours(10);
+        if(LocalTime.now().isAfter(LocalTime.of(10,0))) date.setDate(date.getDate()+1);
+        System.out.println(date);
         Timer timer = new Timer();
 
         timer.schedule(new TimerTask() {

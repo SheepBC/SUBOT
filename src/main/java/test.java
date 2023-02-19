@@ -13,6 +13,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -20,6 +21,6 @@ import java.util.Scanner;
 public class test {
 
     public static void main(String[] args) {
-        System.out.println(Support.noise(123,123,1));
+        SaveNLoad.addP("dasdasd.txt","dasd","ㅇㅁㄴㅇㅁㄴㅇ");
     }
 }

@@ -1,7 +1,7 @@
 #Sub/Data.txt
-#Fri Jan 27 18:21:13 KST 2023
-money=2369182144408281
-last_SP=415296
+#Sun Feb 19 20:30:56 KST 2023
+money=1307289734695877
+last_SP=3300
 tax=0.5
-version=1.4
-now_SP=415296
+version=1.4.1
+now_SP=3300

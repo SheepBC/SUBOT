@@ -209,7 +209,7 @@ public class Stock_Data {
     public void update_Price(){
         int r1 = (int)(Math.random()*10);
         setLast_Price(getPrice());
-        if(r1<4){
+        if(r1<5){
             //+
             update_Price_A();
         }
@@ -246,7 +246,7 @@ public class Stock_Data {
         if(getUpdate_Type().equalsIgnoreCase("C") & Math.random()*10 <3) aP += 1500;
         addPrice(new BigInteger(String.valueOf(aP)));
         if(getPrice().max(BigInteger.ZERO).equals(BigInteger.ZERO)){
-            addPrice(new BigInteger("10000"));
+            addPrice(new BigInteger("1000"));
         }
     }
 
@@ -272,7 +272,7 @@ public class Stock_Data {
     }
 
     private void update_Price_P_P(){
-        double mrp = 5.19-SugoData.getMRP();
+        double mrp = 15.19-SugoData.getMRP()*3;
         double d = Support.noise(getSeed(),getSmooth(),getNoise_X())/mrp;
         addNoise_X(1);
         double p = d;

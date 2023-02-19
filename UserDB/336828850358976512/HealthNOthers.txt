@@ -1,12 +1,11 @@
 #UserDB/336828850358976512/HealthNOthers.txt
-#Fri Jan 27 18:21:38 KST 2023
-School=null
+#Sun Feb 19 20:33:52 KST 2023
 Dead_Num=0
-Health=666917
-Check_NUm=0
+Health=-38
+Check_NUm=7
 isHealth=false
 isStopHealth=false
 Failure_NUm=0
 SleepTime=0/0
-Tired=91
+Tired=94
 Name=Sheep_BC

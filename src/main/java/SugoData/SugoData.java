@@ -141,12 +141,12 @@ public class SugoData {
         for(String id: UserDB.getUserList()){
             UserDB userDB = new UserDB(id);
             BigDecimal p =new BigDecimal(userDB.getAll_Property());
-            UserDB userDB1 = new UserDB(id);
-            String n = userDB1.getName();
             list.add(p);
         }
         BigDecimal am = Support.getAM_Num(list.toArray(new BigDecimal[0]));
-        return am.toBigInteger().divide(new BigInteger("2598810490"));
+        BigInteger sp = am.toBigInteger().divide(new BigInteger("20000")).add(new BigInteger("3300"));
+        if(sp.min(new BigInteger("1000")).equals(sp)) sp = new BigInteger("1000");
+        return sp;
     }
 
     public static void Update_Chart_SP(){
@@ -184,18 +184,18 @@ public class SugoData {
                 chart_am_h.add(Support.getAM_Num(list.toArray(new BigDecimal[0])).toBigInteger().toString());
                 setSP();
             }
-        },date,30*min);
+        },date,15*min);
     }
 
     public static double getMRP(){
         BigDecimal sp = new BigDecimal(getSP());
         BigDecimal spm = new BigDecimal(getLast_SP());
-        boolean bool = sp.min(spm).equals(sp);
+        boolean bool = sp.min(spm.add(new BigDecimal("0.00000000000001"))).equals(sp);
         int b = bool ? 1:-1;
         BigDecimal mrp = sp.divide(spm, 2,RoundingMode.HALF_EVEN );
         String size = "8";
         if(bool){
-            mrp = spm.divide(sp,2,RoundingMode.HALF_EVEN);
+            mrp = spm.divide(sp.add(new BigDecimal("0.00000000000001")),2,RoundingMode.HALF_EVEN);
             size = "7";
         }
         mrp = mrp.subtract(BigDecimal.ONE).abs(MathContext.DECIMAL32);
@@ -204,10 +204,10 @@ public class SugoData {
     }
 
     public static BigInteger getTax_Price(String userid){
-        String mo = "200000";
+        String mo = "2500";
         UserDB userDB = new UserDB(userid);
         BigDecimal price = new BigDecimal(userDB.getAll_Property());
-        price = price.divide(new BigDecimal("1500000000000"),10,RoundingMode.HALF_EVEN);
+        price = price.divide(new BigDecimal("1200000000"),10,RoundingMode.HALF_EVEN);
         BigDecimal tax = new BigDecimal(String.valueOf(getTax()));
         BigDecimal max = new BigDecimal("25.5");
         BigDecimal re = max.subtract(tax)
@@ -216,12 +216,14 @@ public class SugoData {
                 .add(tax)
                 .divide(new BigDecimal("100"),10,RoundingMode.HALF_EVEN)
                 .multiply(new BigDecimal(userDB.getAll_Property()));
+        if(re.min(BigDecimal.ZERO).equals(re)) return BigInteger.ZERO;
         return re.toBigInteger();
 
     }
 
     public static void charge_Tax(){
         //System.out.println("----------------------------------------------");
+        setLast_SP(getSP());
         for(String userid:UserDB.getUserList()){
             UserDB userDB = new UserDB(userid);
             BigDecimal tax = new BigDecimal(SugoData.getTax_Price(userid));
@@ -238,6 +240,7 @@ public class SugoData {
             try {
                 main.jda.retrieveUserById(userid).flatMap(User::openPrivateChannel)
                         .queue(privateChannel -> privateChannel.sendMessageEmbeds(embed.build()).queue());
+                //System.out.println(embed.getFields().get(0).getValue()+" "+userid);
             }catch (Exception e){
 
             }
@@ -255,9 +258,17 @@ public class SugoData {
         //System.out.println(Support.unit(price));
         price = price.multiply(m);
         //System.out.println(Support.unit(price));
-        String s = "0.8";
-        if(getUp(userDB)) s = "1.5";
-        BigDecimal max = new BigDecimal(userDB.getTopSP()).multiply(new BigDecimal(getSP())).multiply(new BigDecimal(s));
+        String s = "0.7";
+        if(getUp(userDB)) s = "1.3";
+        BigInteger maxI = userDB.getTopSP().multiply(SugoData.getSP()).multiply(new BigInteger("4"))
+                .add(userDB.getTopProperty())
+                .add(userDB.getAll_Property())
+                .divide(new BigInteger("6"));
+        BigDecimal max = new BigDecimal(maxI)
+                .multiply(new BigDecimal(s));
+        if(max.min(BigDecimal.ZERO).equals(max)){
+            max = new BigDecimal(getSP().multiply(BigInteger.TWO));
+        }
         if(max.min(price).equals(max)) return max.toBigInteger();
         if(getUp(userDB)) price = price.multiply(new BigDecimal("5"));
         return price.toBigInteger();
@@ -296,25 +307,5 @@ public class SugoData {
         an = an.pow(3);
         BigDecimal t = an.divide(new BigDecimal("25"),10,RoundingMode.HALF_EVEN).add(BigDecimal.ONE);
         return f.add(t).add(BigDecimal.valueOf(getMRP()*3.5));
-    }
-
-    public static void updateLast_SP(){
-        int second = 1000;
-        int min = 60*second;
-        long hour = 60*min;
-
-        Date date = new Date();
-        date.setHours(0);
-        Timer timer = new Timer();
-
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                int now = LocalDate.now().getDayOfMonth();
-                if(now == 1|| now == 14){
-                    setLast_SP(getSP());
-                }
-            }
-        },date,24*hour);
     }
 }

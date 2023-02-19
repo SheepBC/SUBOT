@@ -1,5 +1,6 @@
 package Command;
 
+import SugoData.SugoData;
 import Supporter.Support;
 import Supporter.UserDB;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -65,18 +66,19 @@ public class Garmbing {
         double b = 0;
         double H = 0;
 
-        if( r < (H += 0.0001)) b = 100000000;
-        else if( r < (H += 5)) b = 0;
-        else if( r < (H += 19)) b = 0.5;
-        else if( r < (H += 19.9999)) b = 1;
-        else if( r < (H += 38)) b = 1.2;
-        else if( r < (H += 15)) b = 1.5;
-        else if( r < (H += 3)) b = 2;
+        if( r < (H += 7.8125)) b = 0;
+        else if( r < (H += 15.625)) b = 0.5;
+        else if( r < (H += 18.75)) b = 0.7;
+        else if( r < (H += 15.625)) b = 1;
+        else if( r < (H += 18.75)) b = 1.25;
+        else if( r < (H += 15.625)) b = 1.5;
+        else if( r < (H += 7.8125)) b = 2;
         BigDecimal bd_price = new BigDecimal(price);
         BigDecimal bd_b = new BigDecimal(String.valueOf(b));
         BigDecimal bd_add_price = bd_price.multiply(bd_b).subtract(bd_price);
         BigInteger add_price = bd_add_price.toBigInteger();
         userDB.addMoney(add_price);
+        SugoData.addMoney(add_price.multiply(new BigInteger("-1")));
         EmbedBuilder embed = new EmbedBuilder();
         int addExp = (int) (Math.random()*100);
         embed.setFooter("+"+addExp+"경험치");
@@ -138,6 +140,7 @@ public class Garmbing {
         BigDecimal bd_add_price = bd_price.multiply(bd_b).subtract(bd_price);
         BigInteger add_price = bd_add_price.toBigInteger();
         userDB.addMoney(add_price);
+        SugoData.addMoney(add_price.multiply(new BigInteger("-1")));
         EmbedBuilder embed = new EmbedBuilder();
         int addExp = (int) (Math.random()*50);
         embed.setFooter("+"+addExp+"경험치");
@@ -215,6 +218,7 @@ public class Garmbing {
         BigDecimal bd_add_price = bd_price.multiply(bd_b).subtract(bd_price);
         BigInteger add_price = bd_add_price.toBigInteger();
         userDB.addMoney(add_price);
+        SugoData.addMoney(add_price.multiply(new BigInteger("-1")));
         EmbedBuilder embed = new EmbedBuilder();
         int addExp = (int) (Math.random()*150);
         embed.setFooter("+"+addExp+"경험치");

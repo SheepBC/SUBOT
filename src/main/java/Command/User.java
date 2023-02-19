@@ -777,6 +777,19 @@ public class User {
             return;
         }
         UserDB userDB = new UserDB(user);
+        BigInteger max = userDB.getAll_Property().multiply(new BigInteger("3"))
+                .add(userDB.getTopProperty())
+                .add(userDB.getTopSP().multiply(SugoData.getSP()))
+                .divide(new BigInteger("5"))
+                .subtract(userDB.getDebt());
+        //channel.sendMessage(max+" "+price).queue();
+        if(max.min(price).equals(max)){
+            price = max;
+            channel.sendMessage("대출 한도에 걸렸습니다.").queue();
+        }
+        if(price.min(BigInteger.ZERO).equals(price)){
+            price = BigInteger.ZERO;
+        }
         userDB.addMoney(price);
         userDB.addDebt(price);
         EmbedBuilder embed = new EmbedBuilder();
@@ -793,11 +806,11 @@ public class User {
             channel.sendMessage(notUser).queue();
             return;
         }
-        if(arg.length < 2){
-            channel.sendMessage(command).queue();
-            return;
+        UserDB userDB = new UserDB(user);
+        String sp = userDB.getMoney().toString();
+        if(arg.length >= 2){
+            sp = arg[1];
         }
-        String sp = arg[1];
         if(!Support.isBigI(sp)){
             channel.sendMessage(command).queue();
             return;
@@ -807,14 +820,14 @@ public class User {
             channel.sendMessage("대출하실려면 **숩대출**로").queue();
             return;
         }
-        UserDB userDB = new UserDB(user);
-        if(price.max(userDB.getMoney()).equals(price)){
+        if(price.max(userDB.getMoney().add(BigInteger.ONE)).equals(price)){
             channel.sendMessage("돈이 부족합니다.").queue();
             return;
         }
         if(price.max(userDB.getDebt()).equals(price)){
             price = userDB.getDebt();
         }
+        sp = price.toString();
         price = price.multiply(new BigInteger("-1"));
         userDB.addMoney(price);
         userDB.addDebt(price);
@@ -850,7 +863,7 @@ public class User {
         userDB.setMoney("0");
         for (String id:Stock_Data.list()){
             Stock_Data stock_data = new Stock_Data(id);
-            stock_data.addSelling_Num(new BigInteger(String.valueOf(userDB.getStock_Num(id)*-1)));
+            stock_data.addSelling_Num(new BigInteger(String.valueOf(userDB.getStock_Num(id)).replace(".0","")));
             userDB.setStock(id,0,new BigInteger("0"));
         }
         userDB.setDebt(0);

@@ -300,23 +300,23 @@ public class Support {
         BigDecimal allNum = BigDecimal.ZERO;
         Arrays.sort(list);
 
-        int ap = 4;
-        int mp = 1;
+        int ap = 2;
+        int mp = 3;
 
         for(BigDecimal b: list){
             allNum = allNum.add(b);
         }
 
-        BigDecimal a = allNum.divide(new BigDecimal(String.valueOf(size)), RoundingMode.HALF_EVEN);
+        BigDecimal a = allNum.divide(new BigDecimal(String.valueOf(size)), RoundingMode.HALF_EVEN);//평균
 
-        BigDecimal m = BigDecimal.ZERO;
+        BigDecimal m = BigDecimal.ZERO;//중앙값
         if(size%2 == 0){
             m = list[size/2-1].add(list[size/2]).divide(new BigDecimal("2"),RoundingMode.HALF_EVEN);
         }
         else {
             m = list[size/2];
         }
-
+        //System.out.println("평균: "+a+" ,중앙값: "+m);
         BigDecimal sd = BigDecimal.ZERO;
         for(BigDecimal b:list){
             sd = sd.add((b.subtract(a)).pow(2));
@@ -368,7 +368,6 @@ public class Support {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(ns+" "+seed+" "+smooth+" "+x);
         return Double.parseDouble(ns);
     }
 

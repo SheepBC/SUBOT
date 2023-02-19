@@ -41,7 +41,8 @@ public class Basic
                 .addOption("유저","User","회원가입후 사용할수있는 명령어", Emoji.fromUnicode("\uD83D\uDC64"))
                 .addOption("일과 도박","Work_Garmb","일과 도박 명령어", Emoji.fromUnicode("\uD83D\uDCB8"))
                 .addOption("건강","Health","건강에 대한 명령어", Emoji.fromUnicode("\uD83C\uDFE3"))
-                .addOption("주식","Stock","주식관련명령어", Emoji.fromUnicode("\uD83D\uDCC8"));
+                .addOption("주식","Stock","주식관련명령어", Emoji.fromUnicode("\uD83D\uDCC8"))
+                .addOption("학교","School","학교관련명령어", Emoji.fromUnicode("\uD83C\uDFEB"));
 
         if(userID.equalsIgnoreCase("336828850358976512"))
             menu.addOption("관리자","Manager","관리자 명령어",Emoji.fromUnicode("⚙"));
@@ -62,7 +63,7 @@ public class Basic
         embed.addField("**가진 돈**", Support.unit(SugoData.getMoney()) +"베리",true);
         embed.addField("**가진 돈(SP)**", Support.unit(sp) +"베리",true);
         embed.addField("**SP(기준 물가)**", Support.unit(SugoData.getSP()) +"베리",true);
-        embed.addField("**어제 SP(기준 물가)**", Support.unit(SugoData.getLast_SP()) +"베리",true);
+        embed.addField("**예전 SP(기준 물가)**", Support.unit(SugoData.getLast_SP()) +"베리",true);
         embed.addField("**MRP**", String.valueOf(SugoData.getMRP()),true);
         embed.addField("**버전**",String.valueOf(SugoData.getVersion),true);
         embed.addField("**기본 세율**",SugoData.getTax()+"%",true);

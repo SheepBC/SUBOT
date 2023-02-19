@@ -131,5 +131,19 @@ public class Help {
 
     }
 
+    public void School(){
+        //event.reply("dsad").setEphemeral(true).queue();
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("학교 명령어");
+        embed.setColor(Support.getRandomColor());
+        embed.setFooter(footer);
+        String[] commandList = {"학교","급식"};
+        for(String s:commandList){
+            embed.addField("**"+ Setting.getCommandHelp(s)+"**",Setting.getCommandInform(s),true);
+        }
+        event.replyEmbeds(embed.build()).setEphemeral(true).queue();
+
+    }
+
 
 }

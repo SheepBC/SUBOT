@@ -44,6 +44,10 @@ public class Work {
             channel.sendMessage("건강이 부족합니다.").queue();
             return;
         }
+        if(userDB.isHealth() || userDB.isSleeping()){
+            channel.sendMessage("잠자거나 회복중입니다.").queue();
+            return;
+        }
         HashMap<String,Integer> list = new HashMap<>();
         BigInteger all_price = BigInteger.ZERO;
         long health = 20;
@@ -153,6 +157,10 @@ public class Work {
         UserDB userDB = new UserDB(user);
         if(userDB.getHealth() < -1500){
             channel.sendMessage("건강이 부족합니다.").queue();
+            return;
+        }
+        if(userDB.isHealth() || userDB.isSleeping()){
+            channel.sendMessage("잠자거나 회복중입니다.").queue();
             return;
         }
         BigInteger all_price = BigInteger.ZERO;

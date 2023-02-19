@@ -277,7 +277,6 @@ public class Stock {
                     if(stock_data.getAll_Time() <= stock_data.getTime()){
                         stock_data.update_Price();
                         stock_data.setTime(0);
-                        //System.out.println(stock_data.getName());
                     }
                 }
             }

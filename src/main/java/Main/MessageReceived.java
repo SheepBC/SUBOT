@@ -38,6 +38,8 @@ public class MessageReceived implements Runnable {
         User_Health();
         Stock();
         Reply();
+        School();
+        Sing();
         Test();
 
    }
@@ -279,6 +281,35 @@ public class MessageReceived implements Runnable {
         }
         if(CommandCheck("풀매도")){
             stock_user.Stock_Sell_All();
+        }
+    }
+
+    void School(){
+        School_Command school_command = new School_Command(event,args);
+        if(CommandCheck("급식")){
+            school_command.meal();
+        }
+        if(CommandCheck("학교")){
+            school_command.setSchool();
+        }
+    }
+
+    void Sing(){
+        Sing sing = new Sing(event,args);
+        if(CommandCheck("노래")){
+            sing.play();
+        }
+        if(CommandCheck("끄기")){
+            sing.stop();
+        }
+        if(CommandCheck("넘기기")){
+            sing.skip();
+        }
+        if(CommandCheck("지금")){
+            sing.now();
+        }
+        if(CommandCheck("목록")){
+            sing.list();
         }
     }
 
