@@ -52,7 +52,7 @@ public class main extends ListenerAdapter {
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        //change();
+        change();
         Runnable runnable = new Ready(event);
         Thread thread = new Thread(runnable);
         thread.start();

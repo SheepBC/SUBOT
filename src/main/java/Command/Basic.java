@@ -42,7 +42,8 @@ public class Basic
                 .addOption("일과 도박","Work_Garmb","일과 도박 명령어", Emoji.fromUnicode("\uD83D\uDCB8"))
                 .addOption("건강","Health","건강에 대한 명령어", Emoji.fromUnicode("\uD83C\uDFE3"))
                 .addOption("주식","Stock","주식관련명령어", Emoji.fromUnicode("\uD83D\uDCC8"))
-                .addOption("학교","School","학교관련명령어", Emoji.fromUnicode("\uD83C\uDFEB"));
+                .addOption("학교","School","학교관련명령어", Emoji.fromUnicode("\uD83C\uDFEB"))
+                .addOption("노래","Sing","노래관련명령어", Emoji.fromUnicode("🎶"));
 
         if(userID.equalsIgnoreCase("336828850358976512"))
             menu.addOption("관리자","Manager","관리자 명령어",Emoji.fromUnicode("⚙"));

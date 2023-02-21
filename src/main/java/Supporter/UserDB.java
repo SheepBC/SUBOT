@@ -720,6 +720,7 @@ public class UserDB {
                 chart_H.add(String.valueOf(getHealth()));
                 chart_P.add(getAll_Property().toString());
                 chart_SP.add(getAll_Property().divide(SugoData.getSP()).toString());
+                System.out.println("수고차트 업데이트 완료");
             }
         },date,15*min);
 

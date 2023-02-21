@@ -56,6 +56,9 @@ public class SelectMenu implements Runnable {
             if(option.equalsIgnoreCase("School")){
                 help.School();
             }
+            if(option.equalsIgnoreCase("Sing")){
+                help.Sing();
+            }
         }
         if(id.equalsIgnoreCase("USerRank")){
             User_Menu user_menu = new User_Menu(event);

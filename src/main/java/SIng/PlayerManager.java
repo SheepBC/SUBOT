@@ -55,21 +55,26 @@ public class PlayerManager {
                 String title = audioTrack.getInfo().title;
                 String maker = audioTrack.getInfo().author;
                 String time = Support.time_Unit(audioTrack.getInfo().length/1000);
-                channel.sendMessage(title+" "+maker+" "+time).queue();
+
+                EmbedBuilder embed = new EmbedBuilder();
+                embed.setTitle(title);
+                embed.setColor(Support.getRandomColor());
+                embed.setFooter(maker+"("+time+")");
+
+                channel.sendMessageEmbeds(embed.build()).queue();
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
                 final List<AudioTrack> tracks = audioPlaylist.getTracks();
 
-                channel.sendMessage(tracks.size()+" "+audioPlaylist.getName()).queue();
                 SelectMenu.Builder menu = SelectMenu.create("Sing");
 
 
                 for(final AudioTrack track:tracks){
                     menu.addOption(track.getInfo().title,track.getInfo().uri,Support.time_Unit(track.getInfo().length/1000));
                 }
-                channel.sendMessage("D").setActionRow(menu.build()).queue();
+                channel.sendMessage("검색내용: "+audioPlaylist.getName()).setActionRow(menu.build()).queue();
             }
 
             @Override

@@ -183,6 +183,7 @@ public class SugoData {
                 }
                 chart_am_h.add(Support.getAM_Num(list.toArray(new BigDecimal[0])).toBigInteger().toString());
                 setSP();
+                System.out.println("수고차트 업데이트 완료");
             }
         },date,15*min);
     }
@@ -255,10 +256,9 @@ public class SugoData {
         BigDecimal m = getAttend_Num(userDB);
         int d = 300*UserDB.getUserList().length;
         BigDecimal price = new BigDecimal(getMoney()).divide(new BigDecimal(String.valueOf(d)),10,RoundingMode.HALF_EVEN);
-        //System.out.println(Support.unit(price));
+        //System.out.println("1:"+m);
         price = price.multiply(m);
-        //System.out.println(Support.unit(price));
-        String s = "0.7";
+        String s = "0.45";
         if(getUp(userDB)) s = "1.3";
         BigInteger maxI = userDB.getTopSP().multiply(SugoData.getSP()).multiply(new BigInteger("4"))
                 .add(userDB.getTopProperty())
@@ -269,6 +269,10 @@ public class SugoData {
         if(max.min(BigDecimal.ZERO).equals(max)){
             max = new BigDecimal(getSP().multiply(BigInteger.TWO));
         }
+        if(price.min(BigDecimal.ZERO).equals(price)){
+            price = new BigDecimal(getSP().multiply(BigInteger.TWO));
+        }
+        //System.out.println("2:"+Support.unit(price)+" "+Support.unit(max));
         if(max.min(price).equals(max)) return max.toBigInteger();
         if(getUp(userDB)) price = price.multiply(new BigDecimal("5"));
         return price.toBigInteger();

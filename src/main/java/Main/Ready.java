@@ -33,7 +33,7 @@ public class Ready implements Runnable{
         BackUp();
         ChangeActivity();
         SuGo();
-        //log();
+        log();
     }
 
     public void User_System(){

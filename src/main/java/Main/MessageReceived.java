@@ -40,7 +40,7 @@ public class MessageReceived implements Runnable {
         Reply();
         School();
         Sing();
-        Test();
+        //Test();
 
    }
 
@@ -296,19 +296,19 @@ public class MessageReceived implements Runnable {
 
     void Sing(){
         Sing sing = new Sing(event,args);
-        if(CommandCheck("노래")){
+        if(CommandCheck("노래","play")){
             sing.play();
         }
-        if(CommandCheck("끄기")){
+        if(CommandCheck("끄기","stop")){
             sing.stop();
         }
-        if(CommandCheck("넘기기")){
+        if(CommandCheck("넘기기","다음","skip")){
             sing.skip();
         }
-        if(CommandCheck("지금")){
+        if(CommandCheck("지금","now")){
             sing.now();
         }
-        if(CommandCheck("목록")){
+        if(CommandCheck("목록","list","리스트")){
             sing.list();
         }
     }

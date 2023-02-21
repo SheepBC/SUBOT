@@ -145,5 +145,17 @@ public class Help {
 
     }
 
+    public void Sing(){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("노래 명령어");
+        embed.setColor(Support.getRandomColor());
+        embed.setFooter(footer);
+        String[] commandList = {"노래","끄기","다음","지금","목록"};
+        for(String s:commandList){
+            embed.addField("**"+ Setting.getCommandHelp(s)+"**",Setting.getCommandInform(s),true);
+        }
+        event.replyEmbeds(embed.build()).setEphemeral(true).queue();
+    }
+
 
 }

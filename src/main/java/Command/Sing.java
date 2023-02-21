@@ -2,9 +2,11 @@ package Command;
 
 import SIng.GuildMusicManager;
 import SIng.PlayerManager;
+import Supporter.Support;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -106,7 +108,17 @@ public class Sing {
 
         final GuildMusicManager musicManager = PlayerManager.getINSTANCE().getMusicManager(event.getGuild());
         final AudioPlayer audioPlayer = musicManager.audioPlayer;
-        channel.sendMessage(audioPlayer.getPlayingTrack().getInfo().title).queue();
+        AudioTrack audioTrack = audioPlayer.getPlayingTrack();
+        String title = audioTrack.getInfo().title;
+        String maker = audioTrack.getInfo().author;
+        String time = Support.time_Unit(audioTrack.getInfo().length/1000);
+
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(title);
+        embed.setColor(Support.getRandomColor());
+        embed.setFooter(maker+"("+time+")");
+
+        event.getMessage().replyEmbeds(embed.build()).queue();
     }
 
     public void list(){
@@ -121,14 +133,27 @@ public class Sing {
 
         final ArrayList<AudioTrack> list = new ArrayList<>(queue);
 
-        int num1 = 0;
-        channel.sendMessage("지금"+audioPlayer.getPlayingTrack().getInfo().title).queue();
+        int num1 = 1;
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("노래 목록");
+        embed.setColor(Support.getRandomColor());
+
+        AudioTrackInfo now = audioPlayer.getPlayingTrack().getInfo();
+        String maker = now.author;
+        String time = Support.time_Unit(now.length/1000);
+
+        embed.addField("```[#1]"+now.title+"```",maker+"("+time+")",true);
         for(AudioTrack track:list){
-            channel.sendMessage(track.getInfo().title).queue();
             num1++;
+
+            AudioTrackInfo info = track.getInfo();
+            String makerInfo = info.author;
+            String timeInfo = Support.time_Unit(info.length/1000);
+            embed.addField("```[#"+num1+"]"+info.title+"```",makerInfo+"("+timeInfo+")",true);
+
             if(num1 > 10) break;
         }
-
+        channel.sendMessageEmbeds(embed.build()).queue();
     }
 
     public static void menu(SelectMenuInteractionEvent event, String url){
