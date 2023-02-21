@@ -3,5 +3,5 @@
 money=10062176898856369
 last_SP=3371
 tax=0.5
-version=1.4.1
+version=1.4.2
 now_SP=124681
