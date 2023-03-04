@@ -777,11 +777,15 @@ public class User {
             return;
         }
         UserDB userDB = new UserDB(user);
-        BigInteger max = userDB.getAll_Property().multiply(new BigInteger("3"))
+
+
+        BigInteger max = userDB.getAll_Property().multiply(new BigInteger("15"))
                 .add(userDB.getTopProperty())
                 .add(userDB.getTopSP().multiply(SugoData.getSP()))
-                .divide(new BigInteger("5"))
+                .divide(new BigInteger("17"))
                 .subtract(userDB.getDebt());
+
+
         //channel.sendMessage(max+" "+price).queue();
         if(max.min(price).equals(max)){
             price = max;
@@ -994,7 +998,16 @@ public class User {
         }
     }
 
-
+    public void tax(){
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setColor(Support.getRandomColor());
+        embed.setTitle("예상세금: 약 "+Support.unit(SugoData.getTax_Price(userid))+" 베리");
+        event.getMessage().replyEmbeds(embed.build()).queue();
+    }
 
 
 }

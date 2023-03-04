@@ -2,6 +2,7 @@ package SIng;
 
 import Supporter.Support;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
@@ -15,9 +16,11 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 
 public class PlayerManager {
 
@@ -56,10 +59,19 @@ public class PlayerManager {
                 String maker = audioTrack.getInfo().author;
                 String time = Support.time_Unit(audioTrack.getInfo().length/1000);
 
+                final GuildMusicManager musicManager = PlayerManager.getINSTANCE().getMusicManager(channel.getGuild());
+                final BlockingQueue<AudioTrack> queue = musicManager.scheduler.queue;
+                int num = queue.size();
+
+                String nums = "바로재생";
+                if(num > 0){
+                    nums = "대기열 "+num+"번";
+                }
+
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.setTitle(title);
                 embed.setColor(Support.getRandomColor());
-                embed.setFooter(maker+"("+time+")");
+                embed.setFooter(maker+" ("+time+" , "+nums+")");
 
                 channel.sendMessageEmbeds(embed.build()).queue();
             }
@@ -72,7 +84,7 @@ public class PlayerManager {
 
 
                 for(final AudioTrack track:tracks){
-                    menu.addOption(track.getInfo().title,track.getInfo().uri,Support.time_Unit(track.getInfo().length/1000));
+                    menu.addOption(track.getInfo().title,track.getInfo().uri,Support.time_Unit(track.getInfo().length/1000)+" "+track.getInfo().author);
                 }
                 channel.sendMessage("검색내용: "+audioPlaylist.getName()).setActionRow(menu.build()).queue();
             }

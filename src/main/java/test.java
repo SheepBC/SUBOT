@@ -3,6 +3,7 @@ import Supporter.SaveNLoad;
 import Supporter.Stock_Data;
 import Supporter.Support;
 import Supporter.UserDB;
+import net.dv8tion.jda.api.entities.User;
 
 import java.awt.*;
 import java.awt.desktop.SystemEventListener;
@@ -21,6 +22,7 @@ import java.util.Scanner;
 public class test {
 
     public static void main(String[] args) {
-        SaveNLoad.addP("dasdasd.txt","dasd","ㅇㅁㄴㅇㅁㄴㅇ");
+        UserDB userDB = new UserDB("336828850358976512");
+        SugoData.getAttend_Price(userDB);
     }
 }

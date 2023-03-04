@@ -690,15 +690,10 @@ public class UserDB {
         SaveNLoad.addP(Stock,id,txt);
     }
 
-    public void update_Chart(){
+    public static void Update_User_Charts(){
+
         int second = 1000;
         int min = 60*second;
-
-        String cp = path+"/"+Chart_Path+"/";
-
-        Chart chart_H = new Chart(cp+Chart_H);
-        Chart chart_P = new Chart(cp+Chart_P);
-        Chart chart_SP = new Chart(cp+Chart_SP);
 
         Date date = new Date();
         if(date.getMinutes() < 30){
@@ -714,15 +709,40 @@ public class UserDB {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                //System.out.println(userid);
-                TopUpdate();
-                TopSPUpdate();
-                chart_H.add(String.valueOf(getHealth()));
-                chart_P.add(getAll_Property().toString());
-                chart_SP.add(getAll_Property().divide(SugoData.getSP()).toString());
-                System.out.println("수고차트 업데이트 완료");
+                for(String id:UserDB.getUserList()){
+                    UserDB userDB = new UserDB(id);
+                    userDB.update_Chart();
+                }
+                System.out.println("유저차트 업데이트");
             }
         },date,15*min);
+    }
+
+    public void update_Chart(){
+        String cp = path+"/"+Chart_Path+"/";
+
+        Chart chart_H = new Chart(cp+Chart_H);
+        Chart chart_P = new Chart(cp+Chart_P);
+        Chart chart_SP = new Chart(cp+Chart_SP);
+
+        Date date = new Date();
+        if(date.getMinutes() < 30){
+            date.setMinutes(30);
+        }
+        else {
+            date.setMinutes(0);
+            date.setHours(date.getHours()+1);
+        }
+
+        try {
+            TopUpdate();
+            TopSPUpdate();
+            chart_H.add(String.valueOf(getHealth()));
+            chart_P.add(getAll_Property().toString());
+            chart_SP.add(getAll_Property().divide(SugoData.getSP()).toString());
+        }catch (Exception e){
+            System.out.println(getName()+"("+userid+") 차트 업데이트 실패");
+        }
 
 
     }

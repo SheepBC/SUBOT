@@ -67,7 +67,7 @@ public class Help {
         embed.setColor(Support.getRandomColor());
         embed.setFooter(footer);
         String[] commandList = {"회원가입","내정보","자산","건강","순위","유저정보","송금"
-                ,"유저그래프","경제알람","대출","갚기","파산","출석","도둑질"};
+                ,"유저그래프","경제알람","대출","갚기","파산","출석","도둑질","세금"};
         for(String s:commandList){
             embed.addField("**"+ Setting.getCommandHelp(s)+"**",Setting.getCommandInform(s),true);
         }

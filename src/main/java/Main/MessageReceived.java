@@ -64,6 +64,9 @@ public class MessageReceived implements Runnable {
        if(CommandCheck("공지")){
            maneger.notice();
        }
+       if(CommandCheck("보상")){
+           maneger.give();
+       }
    }
 
     void onMessageEvent(){
@@ -72,6 +75,7 @@ public class MessageReceived implements Runnable {
         user.addTired();
         if(UserDB.isUser(event.getAuthor().getId())){
             UserDB userDB = new UserDB(event.getAuthor());
+            userDB.setName(userDB.getName());
             userDB.TopUpdate();
             userDB.TopSPUpdate();
             userDB.overwork(event.getJDA());
@@ -214,6 +218,9 @@ public class MessageReceived implements Runnable {
         if(CommandCheck("도둑질")){
             user.stealing();
         }
+        if(CommandCheck("세금")){
+            user.tax();
+        }
         Work work = new Work(event,args);
         if(CommandCheck("광질")){
             work.mining();
@@ -289,7 +296,7 @@ public class MessageReceived implements Runnable {
         if(CommandCheck("급식")){
             school_command.meal();
         }
-        if(CommandCheck("학교")){
+        if(CommandCheck("학교","학교등록")){
             school_command.setSchool();
         }
     }
@@ -302,7 +309,7 @@ public class MessageReceived implements Runnable {
         if(CommandCheck("끄기","stop")){
             sing.stop();
         }
-        if(CommandCheck("넘기기","다음","skip")){
+        if(CommandCheck("넘기기","다음","스킵","skip")){
             sing.skip();
         }
         if(CommandCheck("지금","now")){

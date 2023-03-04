@@ -3,6 +3,7 @@ package Command;
 import Main.main;
 import Supporter.SaveNLoad;
 import Supporter.Support;
+import Supporter.UserDB;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
@@ -185,7 +186,7 @@ public class Maneger {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setColor(new Color(4, 101, 4));
         embed.addField("**공지**","```"+text+"```",true);
-        embed.setFooter("🍉SUBACKGOGI");
+        embed.setFooter("🍉SUBACKGOGI(공지가 이상한대로 온다면 -숩봇)");
 
         for(Guild server:event.getJDA().getGuilds()){
             TextChannel channel = checkChannel(new ArrayList<>(server.getTextChannels()));
@@ -217,11 +218,20 @@ public class Maneger {
         for (TextChannel channel:list){
             String topic = channel.getTopic();
             if(topic == null) topic="null";
-            if(topic.contains("-숩봇")){
+                if(topic.contains("-숩봇")){
                 return channel;
             }
         }
         return null;
+    }
+
+    public void give(){
+        for(String id: UserDB.getUserList()){
+            UserDB userDB = new UserDB(id);
+            userDB.addExp(60000);
+            channel.sendMessage(userDB.getName()+"("+id+")").queue();
+        }
+        channel.sendMessage("Rmx").queue();
     }
 
 

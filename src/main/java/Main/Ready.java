@@ -33,14 +33,15 @@ public class Ready implements Runnable{
         BackUp();
         ChangeActivity();
         SuGo();
-        log();
+        //log();
     }
 
     public void User_System(){
         for(String id: UserDB.getUserList()){
             Health(id);
-            User_Chart_and_Top_and_Debt(id);
+            User_Debt(id);
         }
+        UserDB.Update_User_Charts();
         UserDB.Tax_Update();
         System.out.println("유저시스템 작동시작");
     }
@@ -55,9 +56,8 @@ public class Ready implements Runnable{
         }
     }
 
-    public void User_Chart_and_Top_and_Debt(String id){
+    public void User_Debt(String id){
         UserDB userDB = new UserDB(id);
-        userDB.update_Chart();
         userDB.Debt_update(userDB);
     }
 
@@ -122,6 +122,7 @@ public class Ready implements Runnable{
                 SaveNLoad.zip("BackUP/"+dat+"_"+ts+"_Sub.zip","Sub");
                 main.isBackup = false;
                 System.gc();
+                System.out.println("백업완료");
                 jda.getPresence().setActivity(Activity.playing("\"숩명령어\"를 쳐보라고 말하는중 "));
             }
         },date,8*hour);

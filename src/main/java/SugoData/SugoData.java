@@ -173,17 +173,22 @@ public class SugoData {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                chart_sp_m.add(getSP().toString());
-                chart_sg_m.add(getMoney().toString());
-                chart_sg_sp.add(getMoney().divide(getSP()).toString());
-                ArrayList<BigDecimal> list = new ArrayList<BigDecimal>();
-                for(String id:UserDB.getUserList()){
-                    UserDB userDB = new UserDB(id);
-                    list.add(new BigDecimal(String.valueOf(userDB.getHealth())));
+
+                try {
+                    chart_sp_m.add(getSP().toString());
+                    chart_sg_m.add(getMoney().toString());
+                    chart_sg_sp.add(getMoney().divide(getSP()).toString());
+                    ArrayList<BigDecimal> list = new ArrayList<BigDecimal>();
+                    for(String id:UserDB.getUserList()){
+                        UserDB userDB = new UserDB(id);
+                        list.add(new BigDecimal(String.valueOf(userDB.getHealth())));
+                    }
+                    chart_am_h.add(Support.getAM_Num(list.toArray(new BigDecimal[0])).toBigInteger().toString());
+                    setSP();
+                    System.out.println("수고차트 업데이트 완료");
+                }catch (Exception e){
+                    System.out.println("수고차트 업데이트 실패");
                 }
-                chart_am_h.add(Support.getAM_Num(list.toArray(new BigDecimal[0])).toBigInteger().toString());
-                setSP();
-                System.out.println("수고차트 업데이트 완료");
             }
         },date,15*min);
     }
@@ -224,92 +229,76 @@ public class SugoData {
 
     public static void charge_Tax(){
         //System.out.println("----------------------------------------------");
-        setLast_SP(getSP());
+        BigInteger sp = getSP().add(getLast_SP());
+        sp = sp.divide(BigInteger.TWO);
+        setLast_SP(sp);
         for(String userid:UserDB.getUserList()){
-            UserDB userDB = new UserDB(userid);
-            BigDecimal tax = new BigDecimal(SugoData.getTax_Price(userid));
-            BigDecimal price = new BigDecimal(userDB.getAll_Property());
-            BigDecimal p = tax.divide(price,4, RoundingMode.HALF_EVEN).multiply(new BigDecimal("100"));
-            //System.out.println(userDB.getName()+" "+Support.unit(tax)+" "+p+"%");
-            userDB.addMoney(tax.toBigInteger().multiply(new BigInteger("-1")));
-            addMoney(tax.toBigInteger());
-            EmbedBuilder embed = new EmbedBuilder();
-            //embed.setTitle("세금");
-            embed.setColor(Support.getRandomColor());
-            embed.addField("세금",Support.unit(tax)+"베리("+p.setScale(2)+"%)",true);
-            //System.out.println(p+" "+p.setScale(2));
             try {
+                UserDB userDB = new UserDB(userid);
+                BigDecimal tax = new BigDecimal(SugoData.getTax_Price(userid));
+                BigDecimal price = new BigDecimal(userDB.getAll_Property());
+                BigDecimal p = tax.divide(price,4, RoundingMode.HALF_EVEN).multiply(new BigDecimal("100"));
+                //System.out.println(userDB.getName()+" "+Support.unit(tax)+" "+p+"%");
+                userDB.addMoney(tax.toBigInteger().multiply(new BigInteger("-1")));
+                addMoney(tax.toBigInteger());
+                EmbedBuilder embed = new EmbedBuilder();
+                //embed.setTitle("세금");
+                embed.setColor(Support.getRandomColor());
+                embed.addField("세금",Support.unit(tax)+"베리("+p.setScale(2)+"%)",true);
+                //System.out.println(p+" "+p.setScale(2));
                 main.jda.retrieveUserById(userid).flatMap(User::openPrivateChannel)
-                        .queue(privateChannel -> privateChannel.sendMessageEmbeds(embed.build()).queue());
+                       .queue(privateChannel -> privateChannel.sendMessageEmbeds(embed.build()).queue());
                 //System.out.println(embed.getFields().get(0).getValue()+" "+userid);
             }catch (Exception e){
-
+                System.out.println("("+userid+") 세금 업데이트 실패");
             }
         }
         double size = -13.23;
         if(getMRP()<0) size = -2.3;
         addTax(getMRP()*size);
-        main.alarm("기본 세율 변경 "+getTax()+"%");
+        //main.alarm("기본 세율 변경 "+getTax()+"%");
     }
 
     public static BigInteger getAttend_Price(UserDB userDB){
-        BigDecimal m = getAttend_Num(userDB);
-        int d = 300*UserDB.getUserList().length;
-        BigDecimal price = new BigDecimal(getMoney()).divide(new BigDecimal(String.valueOf(d)),10,RoundingMode.HALF_EVEN);
-        //System.out.println("1:"+m);
-        price = price.multiply(m);
-        String s = "0.45";
-        if(getUp(userDB)) s = "1.3";
-        BigInteger maxI = userDB.getTopSP().multiply(SugoData.getSP()).multiply(new BigInteger("4"))
-                .add(userDB.getTopProperty())
-                .add(userDB.getAll_Property())
-                .divide(new BigInteger("6"));
-        BigDecimal max = new BigDecimal(maxI)
-                .multiply(new BigDecimal(s));
-        if(max.min(BigDecimal.ZERO).equals(max)){
-            max = new BigDecimal(getSP().multiply(BigInteger.TWO));
-        }
-        if(price.min(BigDecimal.ZERO).equals(price)){
-            price = new BigDecimal(getSP().multiply(BigInteger.TWO));
-        }
-        //System.out.println("2:"+Support.unit(price)+" "+Support.unit(max));
-        if(max.min(price).equals(max)) return max.toBigInteger();
-        if(getUp(userDB)) price = price.multiply(new BigDecimal("5"));
-        return price.toBigInteger();
-    }
 
-    public static BigInteger getAttend_Price_UP(UserDB userDB){
-        BigDecimal m = getAttend_Num(userDB);
-        int d = 300*UserDB.getUserList().length;
-        BigDecimal price = new BigDecimal(getMoney()).divide(new BigDecimal(String.valueOf(d)),10,RoundingMode.HALF_EVEN);
-        //System.out.println(Support.unit(price));
-        price = price.multiply(m);
-        //System.out.println(Support.unit(price));
-        String s = "0.8";
-        BigDecimal max = new BigDecimal(userDB.getTopSP()).multiply(new BigDecimal(getSP())).multiply(new BigDecimal(s));
-        if(max.min(price).equals(max)) return max.toBigInteger();
-        return price.toBigInteger();
-    }
+        double tax_percent = 0.7+getMRP()/2; //기본세금 퍼센트
+        System.out.println(tax_percent);
 
-    public static boolean getUp(UserDB userDB){
-        BigInteger i = SugoData.getTax_Price(userDB.userid);
-        BigInteger a = SugoData.getAttend_Price_UP(userDB);
-        BigInteger s = i.subtract(a.multiply(new BigInteger("15")));
-        return s.max(new BigInteger("250000000").multiply(getSP())).equals(s);
+        BigDecimal tax = new BigDecimal(SugoData.getTax_Price(userDB.userid));
+        BigDecimal min = new BigDecimal("20000");
+        if(tax.min(min).equals(tax)) tax = min; //최소지급
+
+        System.out.println(Support.unit(tax));
+        tax = tax.multiply(new BigDecimal(String.valueOf(tax_percent))); // 기본 세금 퍼센트
+        tax = tax.divide(new BigDecimal("14"),0,RoundingMode.HALF_EVEN); //14일
+
+        System.out.println(Support.unit(tax));
+
+        BigDecimal price = tax.multiply(getAttend_Num(userDB));//출석상수 곱하기
+
+        System.out.println(Support.unit(price));
+
+        return price.toBigInteger();
     }
 
     public static BigDecimal getAttend_Num(UserDB userDB){
         BigDecimal an = new BigDecimal(String.valueOf(userDB.getAttend_Num()));
         BigDecimal m = new BigDecimal(String.valueOf(userDB.get_AP_Rank()));
         BigDecimal A = new BigDecimal(String.valueOf(UserDB.getUserList().length));
-        BigDecimal f = m.divide(A,10,RoundingMode.HALF_EVEN);
-        f = f.sqrt(MathContext.DECIMAL32);
-        f = f.sqrt(MathContext.DECIMAL32);
-        f = f.pow(3);
-        an =an.sqrt(MathContext.DECIMAL32);
-        an = an.sqrt(MathContext.DECIMAL32);
-        an = an.pow(3);
-        BigDecimal t = an.divide(new BigDecimal("25"),10,RoundingMode.HALF_EVEN).add(BigDecimal.ONE);
-        return f.add(t).add(BigDecimal.valueOf(getMRP()*3.5));
+
+        BigDecimal Rank_Num = m.pow(2).divide(A.pow(2),10,RoundingMode.HALF_EVEN);
+        System.out.println(" "+Rank_Num);
+
+        BigDecimal three = new BigDecimal("3");
+        BigDecimal Attend_Num = an.sqrt(MathContext.DECIMAL32);//출석횟수의 제곱
+        Attend_Num = Attend_Num.divide(Attend_Num.add(three),10,RoundingMode.HALF_EVEN);
+        Attend_Num = Attend_Num.pow(2);
+
+        System.out.println(" "+Attend_Num);
+
+        BigDecimal price = Rank_Num.add(Attend_Num);
+        System.out.println(price);
+
+        return price;
     }
 }

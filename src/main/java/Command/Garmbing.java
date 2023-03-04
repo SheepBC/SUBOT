@@ -66,13 +66,15 @@ public class Garmbing {
         double b = 0;
         double H = 0;
 
-        if( r < (H += 7.8125)) b = 0;
+        if(r < (H += 3.8125)) b = 0;
+        else if( r < (H += 4)) b = 0.2;
         else if( r < (H += 15.625)) b = 0.5;
         else if( r < (H += 18.75)) b = 0.7;
         else if( r < (H += 15.625)) b = 1;
         else if( r < (H += 18.75)) b = 1.25;
         else if( r < (H += 15.625)) b = 1.5;
-        else if( r < (H += 7.8125)) b = 2;
+        else if( r < (H += 4)) b = 1.7;
+        else if( r < (H += 3.8125)) b = 2;
         BigDecimal bd_price = new BigDecimal(price);
         BigDecimal bd_b = new BigDecimal(String.valueOf(b));
         BigDecimal bd_add_price = bd_price.multiply(bd_b).subtract(bd_price);
