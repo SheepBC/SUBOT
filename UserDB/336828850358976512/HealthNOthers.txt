@@ -1,12 +1,12 @@
 #UserDB/336828850358976512/HealthNOthers.txt
-#Sat Mar 04 20:10:45 KST 2023
+#Tue May 09 08:03:27 KST 2023
 School=E퀁왡캯겘슏볥좍첚륂뿍놰웋룻킸쒮쫨뒇첝훘륣곍씿꿰홹얝촫킻흛흌쑉튘꿃
 Dead_Num=0
-Health=26584
-Check_NUm=50
+Health=6329
+Check_NUm=79
 isHealth=false
 isStopHealth=false
 Failure_NUm=0
-SleepTime=468180/604800
-Tired=60
+SleepTime=85320/6048000
+Tired=52
 Name=Sheep_BC

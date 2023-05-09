@@ -2,8 +2,7 @@ package Command;
 
 import Chart.Chart;
 import Chart.Chart_Data;
-import Main.SelectButton;
-import SugoData.SugoData;
+import SugoData.*;
 import Supporter.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -14,7 +13,6 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 
-import java.awt.*;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -98,7 +96,8 @@ public class User {
         BigInteger sp = userDB.getAll_Property().divide(SugoData.getSP());
         embed.addField("**재산**",
                 "총자산: "+Support.unit(userDB.getAll_Property())+" ("+userDB.get_AP_Rank()+"위)"+"\n"+
-                "SP: "+Support.unit(sp)+"SP",false);
+                "SP: "+Support.unit(sp)+"SP"+"\n"+
+                "경험치: "+Support.unit(userDB.getExp()),false);
 
         String sleep = "\n잠: "+Support.time_Unit(userDB.getSleepTime())+"/"+Support.time_Unit(userDB.getAll_SleepTime());
 
@@ -619,7 +618,7 @@ public class User {
         if(user.isBot()){
             sent = new UserDB(sentId);
             sent.addMoney(sent_price.divide(BigInteger.TWO));
-            SugoData.addMoney(sent_price.divide(BigInteger.TWO));
+            SugoData.addMoney(sent_price.divide(BigInteger.TWO), SugoAddMoney.Send_Bot);
             embed.addField("금액",Support.unit(sent_price.divide(BigInteger.TWO)),true);
         }
         else {
@@ -780,9 +779,9 @@ public class User {
 
 
         BigInteger max = userDB.getAll_Property().multiply(new BigInteger("15"))
-                .add(userDB.getTopProperty())
+                .add(userDB.getTopProperty().multiply(new BigInteger("15")))
                 .add(userDB.getTopSP().multiply(SugoData.getSP()))
-                .divide(new BigInteger("17"))
+                .divide(new BigInteger("31"))
                 .subtract(userDB.getDebt());
 
 
@@ -862,7 +861,7 @@ public class User {
         }
         UserDB userDB = new UserDB(event.getUser());
         if(userDB.getAll_Property().min(BigInteger.ZERO).equals(BigInteger.ZERO)){
-            SugoData.addMoney(userDB.getAll_Property());
+            SugoData.addMoney(userDB.getAll_Property(),SugoAddMoney.Bankruptcy);
         }
         userDB.setMoney("0");
         for (String id:Stock_Data.list()){
@@ -958,7 +957,7 @@ public class User {
         embed.setTitle(user.getName()+"님의 도둑질");
         embed.setColor(Support.getRandomColor());
         embed.addField("훔친돈","```"+Support.unit(price.toBigInteger())+"```",true);
-        embed.setFooter(addExp+"Exp");
+        embed.setFooter(addExp+"Exp "+stolen.getName());
         channel.sendMessageEmbeds(embed.build()).queue();
 
     }

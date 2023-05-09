@@ -188,7 +188,7 @@ public class MessageReceived implements Runnable {
         }
 
          */
-        if(CommandCheck("순위")){
+        if(CommandCheck("순위","랭크")){
             user.Rank();
         }
         if(CommandCheck("유저정보")){

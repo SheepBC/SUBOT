@@ -8,15 +8,14 @@ import Supporter.UserDB;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 
 public class SugoData {
@@ -24,7 +23,6 @@ public class SugoData {
     public static String DataPath = "Sub/Data.txt";
     public static String ChartPath = "Sub/Charts/";
     public static String AttendPath = "Sub/Attend.txt";
-    public static String SleepPath = "Sub/Sleep.txt";
     public static String sp_m = "SP_Price";
     public static String sg_m = "SG_Money";
     public static String sg_sp = "SG_SP";
@@ -33,7 +31,11 @@ public class SugoData {
     public static String money = "money";
     public static String tax = "tax";
     public static String last_SP = "last_SP";
+    public static String change_SP = "change_SP";
     public static String now_SP = "now_SP";
+
+    private static BigInteger Update_Money = BigInteger.ZERO;
+    private static BigInteger Update_last_Money = BigInteger.ZERO;
 
     public static String getAttend(String id){
         String s = SaveNLoad.loadP(AttendPath,id);
@@ -42,16 +44,6 @@ public class SugoData {
     }
 
     public static void setAttend(String id){
-        SaveNLoad.addP(AttendPath,id, LocalDate.now().toString());
-    }
-
-    public static String getSleep(String id){
-        String s = SaveNLoad.loadP(AttendPath,id);
-        if(s == null) return "null";
-        return s;
-    }
-
-    public static void setSleep(String id){
         SaveNLoad.addP(AttendPath,id, LocalDate.now().toString());
     }
 
@@ -64,6 +56,17 @@ public class SugoData {
     }
     public static void setLast_SP(BigInteger bInt){
         SaveNLoad.addP(DataPath,last_SP,bInt.toString());
+    }
+
+    public static BigInteger getChange_SP(){
+        try{
+            return new  BigInteger(SaveNLoad.loadP(DataPath,change_SP));
+        }catch (Exception e){
+            return BigInteger.ZERO;
+        }
+    }
+    public static void setChange_SP(BigInteger bInt){
+        SaveNLoad.addP(DataPath,change_SP,bInt.toString());
     }
 
     public static BigInteger getSP(){
@@ -86,8 +89,16 @@ public class SugoData {
             return BigInteger.ZERO;
         }
     }
-    public static void setMoney(BigInteger bInt){
+
+    private static void Update_setMoney(BigInteger bInt){
         SaveNLoad.addP(DataPath,money,bInt.toString());
+        if(bInt.min(BigInteger.ZERO).equals(bInt)){
+            //System.out.println(bInt);
+        }
+    }
+
+    public static synchronized void setMoney(BigInteger bInt){
+        Update_Money = bInt;
     }
 
     public static void setMoney(int i){
@@ -102,21 +113,25 @@ public class SugoData {
         setMoney(new BigInteger(s));
     }
 
-    public static void addMoney(BigInteger bInt){
+    public static void addMoney(BigInteger bInt,SugoAddMoney reason){
         BigInteger bi = getMoney().add(bInt);
         setMoney(bi);
+        //BigInteger ar = amr.get(reason.ordinal()).add(bInt);
+        //amr.add(reason.ordinal(),ar);
     }
 
-    public static void addMoney(int i){
-        addMoney(new BigInteger(String.valueOf(i)));
+    public static ArrayList<BigInteger> amr = new ArrayList<>();
+
+    public static void addMoney(int i,SugoAddMoney reason){
+        addMoney(new BigInteger(String.valueOf(i)),reason);
     }
 
-    public static void addMoney(String s){
-        addMoney(new BigInteger(s));
+    public static void addMoney(String s,SugoAddMoney reason){
+        addMoney(new BigInteger(s),reason);
     }
 
-    public static void addMoney(long l){
-        addMoney(new BigInteger(String.valueOf(l)));
+    public static void addMoney(long l,SugoAddMoney reason){
+        addMoney(new BigInteger(String.valueOf(l)),reason);
     }
 
     public static double getTax(){
@@ -136,7 +151,7 @@ public class SugoData {
         else setTax(tax);
     }
 
-    private static BigInteger getNow_SP(){
+    private static BigInteger getNow_SP_old_version(){
         ArrayList<BigDecimal> list = new ArrayList<>();
         for(String id: UserDB.getUserList()){
             UserDB userDB = new UserDB(id);
@@ -147,6 +162,65 @@ public class SugoData {
         BigInteger sp = am.toBigInteger().divide(new BigInteger("20000")).add(new BigInteger("3300"));
         if(sp.min(new BigInteger("1000")).equals(sp)) sp = new BigInteger("1000");
         return sp;
+    }
+
+    private static BigInteger getNow_SP(){
+
+        //리스트 준비
+        ArrayList<BigDecimal> list = new ArrayList<>();
+        for(String id: UserDB.getUserList()){
+            UserDB userDB = new UserDB(id);
+            BigDecimal p =new BigDecimal(userDB.getAll_Property());
+            list.add(p);
+        }
+
+        //1.유저 전체 AM값
+        BigDecimal All_User_AM = Support.getAM_Num(list.toArray(new BigDecimal[0]));
+
+        int user_Num = UserDB.getUserList().length;
+        //2.70% 유저 AM값
+        ArrayList<BigDecimal> User_70 = new ArrayList<>();
+        for(String id: UserDB.getUserList()){
+            UserDB userDB = new UserDB(id);
+            if(userDB.get_AP_Rank() >= user_Num*0.3){
+                BigDecimal p =new BigDecimal(userDB.getAll_Property());
+                User_70.add(p);
+            }
+        }
+        BigDecimal User_AM_70 = Support.getAM_Num(User_70.toArray(new BigDecimal[0]));
+
+        //3.40% 유저 AM값
+        ArrayList<BigDecimal> User_40 = new ArrayList<>();
+        for(String id: UserDB.getUserList()){
+            UserDB userDB = new UserDB(id);
+            if(userDB.get_AP_Rank() >= user_Num*0.6){
+                BigDecimal p =new BigDecimal(userDB.getAll_Property());
+                User_40.add(p);
+            }
+        }
+        BigDecimal User_AM_40 = Support.getAM_Num(User_40.toArray(new BigDecimal[0]));
+
+
+        //4. SP 계산
+        BigDecimal SP_BD = BigDecimal.ZERO;
+        //SP = SP.add(All_User_AM.multiply(new BigDecimal("0.001")));
+        SP_BD = SP_BD.add(User_AM_70.multiply(new BigDecimal("0.60")));
+        SP_BD = SP_BD.add(User_AM_40.multiply(new BigDecimal("0.40")));
+        BigInteger SP = SP_BD.toBigInteger().divide(new BigInteger("50000")).add(new BigInteger("3300"));
+
+        /*
+        System.out.println("All_User_AM : "+Support.unit(All_User_AM));
+        System.out.println("User_AM_70 : "+Support.unit(User_AM_70));
+        System.out.println("User_AM_40 : "+Support.unit(User_AM_40));
+        System.out.println("SP_BD : "+Support.unit(SP_BD));
+        System.out.println("SP : "+Support.unit(SP));
+        System.out.println("User_AM_70/All_User_AM : "+User_AM_70.divide(All_User_AM,6,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")));
+        System.out.println("User_AM_40/User_AM_70 : "+User_AM_40.divide(User_AM_70,6,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")));
+        */
+
+        if(SP.min(new BigInteger("1000")).equals(SP)) SP = new BigInteger("1000");
+        return SP;
+
     }
 
     public static void Update_Chart_SP(){
@@ -229,9 +303,10 @@ public class SugoData {
 
     public static void charge_Tax(){
         //System.out.println("----------------------------------------------");
-        BigInteger sp = getSP().add(getLast_SP());
+        BigInteger sp = getSP().add(getChange_SP());
         sp = sp.divide(BigInteger.TWO);
         setLast_SP(sp);
+        setChange_SP(getSP());
         for(String userid:UserDB.getUserList()){
             try {
                 UserDB userDB = new UserDB(userid);
@@ -240,7 +315,7 @@ public class SugoData {
                 BigDecimal p = tax.divide(price,4, RoundingMode.HALF_EVEN).multiply(new BigDecimal("100"));
                 //System.out.println(userDB.getName()+" "+Support.unit(tax)+" "+p+"%");
                 userDB.addMoney(tax.toBigInteger().multiply(new BigInteger("-1")));
-                addMoney(tax.toBigInteger());
+                addMoney(tax.toBigInteger(),SugoAddMoney.Tax);
                 EmbedBuilder embed = new EmbedBuilder();
                 //embed.setTitle("세금");
                 embed.setColor(Support.getRandomColor());
@@ -256,12 +331,12 @@ public class SugoData {
         double size = -13.23;
         if(getMRP()<0) size = -2.3;
         addTax(getMRP()*size);
-        //main.alarm("기본 세율 변경 "+getTax()+"%");
+        main.alarm("기본 세율 변경 "+getTax()+"%");
     }
 
     public static BigInteger getAttend_Price(UserDB userDB){
 
-        double tax_percent = 0.7+getMRP()/2; //기본세금 퍼센트
+        double tax_percent = 0.8+getMRP()/2; //기본세금 퍼센트
         System.out.println(tax_percent);
 
         BigDecimal tax = new BigDecimal(SugoData.getTax_Price(userDB.userid));
@@ -301,4 +376,22 @@ public class SugoData {
 
         return price;
     }
+
+    public static void updateMoney(){
+
+        Update_Money = getMoney();
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(!Update_Money.equals(Update_last_Money)){
+                    Update_setMoney(Update_Money);
+                    Update_last_Money = Update_Money;
+                }
+            }
+        },0,10000);
+
+    }
+
 }

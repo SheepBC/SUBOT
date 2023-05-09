@@ -1,6 +1,6 @@
 package Command;
 
-import SugoData.SugoData;
+import SugoData.*;
 import Supporter.Support;
 import Supporter.UserDB;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -54,6 +54,12 @@ public class Garmbing {
             price = new BigInteger(arg[1]);
         }
 
+        BigInteger max = SugoData.getMoney().divide(new BigInteger("3"));
+        if(price.max(max).equals(price)){
+            channel.sendMessage("최대 "+Support.unit(max)+"까지 걸 수 있습니다.").queue();
+            return;
+        }
+
         if(price.max(userDB.getMoney().add(BigInteger.ONE)).equals(price)){
             channel.sendMessage("돈이 부족합니다.").queue();
             return;
@@ -66,8 +72,7 @@ public class Garmbing {
         double b = 0;
         double H = 0;
 
-        if(r < (H += 3.8125)) b = 0;
-        else if( r < (H += 4)) b = 0.2;
+        if(r < (H += 4.8125)) b = 0;
         else if( r < (H += 15.625)) b = 0.5;
         else if( r < (H += 18.75)) b = 0.7;
         else if( r < (H += 15.625)) b = 1;
@@ -80,7 +85,7 @@ public class Garmbing {
         BigDecimal bd_add_price = bd_price.multiply(bd_b).subtract(bd_price);
         BigInteger add_price = bd_add_price.toBigInteger();
         userDB.addMoney(add_price);
-        SugoData.addMoney(add_price.multiply(new BigInteger("-1")));
+        SugoData.addMoney(add_price.multiply(new BigInteger("-1")), SugoAddMoney.Garmb);
         EmbedBuilder embed = new EmbedBuilder();
         int addExp = (int) (Math.random()*100);
         embed.setFooter("+"+addExp+"경험치");
@@ -142,7 +147,7 @@ public class Garmbing {
         BigDecimal bd_add_price = bd_price.multiply(bd_b).subtract(bd_price);
         BigInteger add_price = bd_add_price.toBigInteger();
         userDB.addMoney(add_price);
-        SugoData.addMoney(add_price.multiply(new BigInteger("-1")));
+        SugoData.addMoney(add_price.multiply(new BigInteger("-1")), SugoAddMoney.Garmb);
         EmbedBuilder embed = new EmbedBuilder();
         int addExp = (int) (Math.random()*50);
         embed.setFooter("+"+addExp+"경험치");
@@ -220,7 +225,7 @@ public class Garmbing {
         BigDecimal bd_add_price = bd_price.multiply(bd_b).subtract(bd_price);
         BigInteger add_price = bd_add_price.toBigInteger();
         userDB.addMoney(add_price);
-        SugoData.addMoney(add_price.multiply(new BigInteger("-1")));
+        SugoData.addMoney(add_price.multiply(new BigInteger("-1")), SugoAddMoney.Garmb);
         EmbedBuilder embed = new EmbedBuilder();
         int addExp = (int) (Math.random()*150);
         embed.setFooter("+"+addExp+"경험치");

@@ -1,6 +1,6 @@
 package Command;
 
-import SugoData.SugoData;
+import SugoData.*;
 import Supporter.SaveNLoad;
 import Supporter.Support;
 import Supporter.UserDB;
@@ -143,7 +143,7 @@ public class Work {
         userDB.addHealth(addHealth);
         userDB.addMoney(addPrice);
         userDB.addExp(addExp);
-        SugoData.addMoney(addPrice.multiply(new BigInteger("-1")));
+        SugoData.addMoney(addPrice.multiply(new BigInteger("-1")),SugoAddMoney.Work);
 
         return type+" "+num+" "+addPrice+" "+addHealth+" "+addExp;
 
@@ -217,7 +217,7 @@ public class Work {
         userDB.addExp(addExp);
         userDB.addHealth(addHealth);
         userDB.addMoney(addPrice);
-        SugoData.addMoney(addPrice.multiply(new BigInteger("-1")));
+        SugoData.addMoney(addPrice.multiply(new BigInteger("-1")),SugoAddMoney.Work);
 
         return addHealth+" "+addExp+" "+addPrice+" "+type;
     }

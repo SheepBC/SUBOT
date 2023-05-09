@@ -2,7 +2,7 @@ package Supporter;
 
 import Chart.Chart;
 import School.School_Data;
-import SugoData.SugoData;
+import SugoData.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 
@@ -128,7 +128,7 @@ public class UserDB {
         setTopProperty(0);
         setEconomy_Alarm(false);
         setMoney(10000);
-        SugoData.addMoney(-10000);
+        SugoData.addMoney(-10000,SugoAddMoney.User);
         setTax(0);
         setAuto_TAx(false);
         setDebt(0);
@@ -809,7 +809,7 @@ public class UserDB {
     public void overwork(JDA jda){
         if(getHealth() < -2500){
             if(getAll_Property().min(BigInteger.ZERO).equals(BigInteger.ZERO)){
-                SugoData.addMoney(getAll_Property());
+                SugoData.addMoney(getAll_Property(),SugoAddMoney.Over_Work);
             }
             setMoney("0");
             for (String id:Stock_Data.list()){

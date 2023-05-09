@@ -1,6 +1,7 @@
 package Command;
 
 import Main.main;
+import SugoData.*;
 import Supporter.SaveNLoad;
 import Supporter.Support;
 import Supporter.UserDB;
@@ -17,6 +18,7 @@ import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 
 import java.awt.*;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -161,6 +163,11 @@ public class Maneger {
         embed.addField("사용한 횟수",main.use+"번",true);
         embed.setFooter("평균 사용횟수 "+(double)(main.use/main.users.size())+"번");
         channel.sendMessageEmbeds(embed.build()).queue();
+        for(BigInteger bi :SugoData.amr){
+            int i = SugoData.amr.indexOf(bi);
+            String name = SugoAddMoney.values()[i].name();
+            channel.sendMessage(name+": "+bi.toString()).queue();
+        }
     }
 
     public void notice(){

@@ -277,6 +277,9 @@ public class Stock {
                     if(stock_data.getAll_Time() <= stock_data.getTime()){
                         stock_data.update_Price();
                         stock_data.setTime(0);
+                        if(id.equalsIgnoreCase("HM")){
+                            System.out.println("주식업데이트");
+                        }
                     }
                 }
             }

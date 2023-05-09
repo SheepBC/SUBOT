@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Main.main;
-import SugoData.SugoData;
+import SugoData.*;
 
 import static Supporter.Stock_Data.Key.*;
 
@@ -267,7 +267,7 @@ public class Stock_Data {
             addPrice = addPrice.multiply(BigDecimal.TEN);
         }
         //  System.out.println(getName()+" "+Support.unit(addPrice)+" "+aPP);
-        SugoData.addMoney(addPrice.multiply(new BigDecimal("-1")).toBigInteger());
+        SugoData.addMoney(addPrice.multiply(new BigDecimal("-1")).toBigInteger(),SugoAddMoney.Stock);
         addAll_Price(addPrice.toBigInteger());
     }
 
@@ -285,7 +285,7 @@ public class Stock_Data {
             addPrice = addPrice.multiply(BigDecimal.TEN);
         }
         //System.out.println(getName()+" "+Support.unit(addPrice)+" "+p);
-        SugoData.addMoney(addPrice.multiply(new BigDecimal("-1")).toBigInteger());
+        SugoData.addMoney(addPrice.multiply(new BigDecimal("-1")).toBigInteger(),SugoAddMoney.Stock);
         addAll_Price(addPrice.toBigInteger());
         //System.out.println(getPrice()+" "+p);
     }

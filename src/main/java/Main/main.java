@@ -2,6 +2,8 @@ package Main;
 
 import Command.Basic;
 import SheepBC.BaseN;
+import SugoData.SugoAddMoney;
+import SugoData.SugoData;
 import Supporter.SaveNLoad;
 import Supporter.UserDB;
 import net.dv8tion.jda.api.JDA;
@@ -27,6 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,10 +55,14 @@ public class main extends ListenerAdapter {
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        //change();
+        change();
         Runnable runnable = new Ready(event);
         Thread thread = new Thread(runnable);
         thread.start();
+
+        for(SugoAddMoney s : SugoAddMoney.values()){
+            SugoData.amr.add(s.ordinal(), BigInteger.ZERO);
+        }
 
     }
 
