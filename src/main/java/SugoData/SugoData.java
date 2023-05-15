@@ -34,8 +34,7 @@ public class SugoData {
     public static String change_SP = "change_SP";
     public static String now_SP = "now_SP";
 
-    private static BigInteger Update_Money = BigInteger.ZERO;
-    private static BigInteger Update_last_Money = BigInteger.ZERO;
+    private static ArrayList<BigInteger> money_list = new ArrayList<>();
 
     public static String getAttend(String id){
         String s = SaveNLoad.loadP(AttendPath,id);
@@ -83,11 +82,7 @@ public class SugoData {
     public static String getVersion = SaveNLoad.loadP(DataPath,version);
 
     public static BigInteger getMoney(){
-        try{
-            return new  BigInteger(SaveNLoad.loadP(DataPath,money));
-        }catch (Exception e){
-            return BigInteger.ZERO;
-        }
+        return money_list.get(0);
     }
 
     private static void Update_setMoney(BigInteger bInt){
@@ -98,7 +93,8 @@ public class SugoData {
     }
 
     public static synchronized void setMoney(BigInteger bInt){
-        Update_Money = bInt;
+        if(money_list.size() == 0) money_list.add(bInt);
+        else money_list.set(0,bInt);
     }
 
     public static void setMoney(int i){
@@ -116,8 +112,6 @@ public class SugoData {
     public static void addMoney(BigInteger bInt,SugoAddMoney reason){
         BigInteger bi = getMoney().add(bInt);
         setMoney(bi);
-        //BigInteger ar = amr.get(reason.ordinal()).add(bInt);
-        //amr.add(reason.ordinal(),ar);
     }
 
     public static ArrayList<BigInteger> amr = new ArrayList<>();
@@ -377,18 +371,23 @@ public class SugoData {
         return price;
     }
 
+    public static BigInteger getOr_Money(){
+        try{
+            return new  BigInteger(SaveNLoad.loadP(DataPath,money));
+        }catch (Exception e){
+            return BigInteger.ZERO;
+        }
+    }
+
     public static void updateMoney(){
 
-        Update_Money = getMoney();
+        money_list.add(getOr_Money());
 
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(!Update_Money.equals(Update_last_Money)){
-                    Update_setMoney(Update_Money);
-                    Update_last_Money = Update_Money;
-                }
+                Update_setMoney(money_list.get(0));
             }
         },0,10000);
 

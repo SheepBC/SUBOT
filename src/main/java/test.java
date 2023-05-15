@@ -87,7 +87,6 @@ public class test {
             e.printStackTrace();
 
         }
-        BigInteger end =SugoData.getMoney();
 
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -96,7 +95,7 @@ public class test {
                 BigInteger end =SugoData.getMoney();
                 System.out.println(start.subtract(end));
             }
-        },2000);
+        },12000);
 
 
     }

@@ -53,6 +53,7 @@ public class Maneger {
         int i = ts.indexOf(".");
         ts = ts.substring(0,i);
         main.isBackup = true;
+        SugoData.Update_Chart_SP();
         jda.getPresence().setActivity(Activity.playing("백업중"));
         channel.sendMessage("백업시작_userDB").queue();
         SaveNLoad.zip("BackUP/"+dat+"_"+ts+"_userDB.zip","UserDB");
